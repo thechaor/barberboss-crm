@@ -36,6 +36,8 @@ const Barbers = () => {
     email: "",
     photo_url: "",
   });
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const { data: barbers, isLoading } = useQuery({
     queryKey: ["barbers-admin"],
@@ -51,7 +53,29 @@ const Barbers = () => {
 
   const createBarber = useMutation({
     mutationFn: async (newBarber: typeof formData) => {
-      const { error } = await supabase.from("barbers").insert([newBarber]);
+      let photoUrl = newBarber.photo_url;
+
+      // Upload photo if file is selected
+      if (photoFile) {
+        setUploading(true);
+        const fileName = `barber-${Date.now()}-${photoFile.name}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('gallery')
+          .upload(fileName, photoFile);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('gallery')
+          .getPublicUrl(fileName);
+        
+        photoUrl = publicUrl;
+        setUploading(false);
+      }
+
+      const { error } = await supabase
+        .from("barbers")
+        .insert([{ ...newBarber, photo_url: photoUrl }]);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -59,9 +83,12 @@ const Barbers = () => {
       toast({ title: "Barbeiro adicionado com sucesso!" });
       setIsDialogOpen(false);
       setFormData({ name: "", phone: "", email: "", photo_url: "" });
+      setPhotoFile(null);
+      setUploading(false);
     },
     onError: () => {
       toast({ title: "Erro ao adicionar barbeiro", variant: "destructive" });
+      setUploading(false);
     },
   });
 
@@ -158,17 +185,26 @@ const Barbers = () => {
                 />
               </div>
               <div>
-                <Label htmlFor="photo">URL da Foto</Label>
+                <Label htmlFor="photo">Foto do Barbeiro</Label>
                 <Input
                   id="photo"
-                  value={formData.photo_url}
-                  onChange={(e) =>
-                    setFormData({ ...formData, photo_url: e.target.value })
-                  }
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setPhotoFile(file);
+                    }
+                  }}
                 />
+                {photoFile && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Arquivo selecionado: {photoFile.name}
+                  </p>
+                )}
               </div>
-              <Button type="submit" className="w-full" variant="gold">
-                Adicionar
+              <Button type="submit" className="w-full" variant="gold" disabled={uploading}>
+                {uploading ? "Enviando foto..." : "Adicionar"}
               </Button>
             </form>
           </DialogContent>
