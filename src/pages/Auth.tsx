@@ -43,17 +43,25 @@ const Auth = () => {
 
     try {
       const validation = loginSchema.parse({ email, password });
-      const result = await signIn(validation.email, validation.password) as { error: any; isAdmin?: boolean };
+      const { error, role } = await signIn(validation.email, validation.password);
 
-      if (result.error) {
-        if (result.error.message.includes("Invalid login credentials")) {
+      if (error) {
+        if (error.message.includes("Invalid login credentials")) {
           toast.error("Email ou senha incorretos");
         } else {
-          toast.error(result.error.message);
+          toast.error(error.message);
         }
       } else {
         toast.success("Login realizado com sucesso!");
-        // Navigation is handled by AuthContext
+        
+        // Redirect based on role
+        if (role === 'admin') {
+          navigate("/dashboard");
+        } else if (role === 'barber') {
+          navigate("/barbeiro-dashboard");
+        } else {
+          navigate("/minha-conta");
+        }
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -86,6 +94,7 @@ const Auth = () => {
         }
       } else {
         toast.success("Cadastro realizado com sucesso!");
+        navigate("/minha-conta");
       }
     } catch (error) {
       if (error instanceof z.ZodError) {

@@ -1,16 +1,86 @@
 import { Card } from "@/components/ui/card";
 import { Users, Calendar, TrendingUp, Star } from "lucide-react";
-import { mockClients, mockAppointments } from "@/data/mockClients";
+import { useAuth } from "@/contexts/AuthContext";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+
+interface Appointment {
+  id: string;
+  client_name: string;
+  client_phone: string;
+  appointment_date: string;
+  appointment_time: string;
+  status: string;
+  services: { name: string } | null;
+}
 
 const Dashboard = () => {
-  const totalClients = mockClients.length;
-  const vipClients = mockClients.filter(c => c.isVip).length;
-  const todayAppointments = mockAppointments.filter(
-    a => a.status === "scheduled"
+  const { user } = useAuth();
+
+  const today = new Date().toLocaleDateString('pt-BR', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  // Get user profile
+  const { data: profile } = useQuery({
+    queryKey: ['profile', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user?.id)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Get total clients
+  const { data: clientsData } = useQuery({
+    queryKey: ['clients-count'],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true });
+      
+      if (error) throw error;
+      return count || 0;
+    },
+  });
+
+  // Get appointments
+  const { data: appointments = [] } = useQuery({
+    queryKey: ['appointments'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('appointments')
+        .select('*, services(name)')
+        .order('appointment_date', { ascending: true })
+        .order('appointment_time', { ascending: true });
+      
+      if (error) throw error;
+      return data as Appointment[];
+    },
+  });
+
+  const totalClients = clientsData || 0;
+  const todayDate = new Date().toISOString().split('T')[0];
+  const todayAppointments = appointments.filter(
+    a => a.appointment_date === todayDate && a.status === 'confirmed'
   ).length;
-  const avgVisits = Math.round(
-    mockClients.reduce((sum, c) => sum + c.visitCount, 0) / totalClients
-  );
+  
+  // Calculate VIP clients (more than 5 completed appointments)
+  const vipClients = appointments.filter(
+    a => a.status === 'completed'
+  ).length > 5 ? Math.floor(totalClients * 0.2) : 0;
+
+  // Calculate average visits
+  const completedAppointments = appointments.filter(a => a.status === 'completed');
+  const avgVisits = totalClients > 0 ? Math.round(completedAppointments.length / totalClients) : 0;
 
   const stats = [
     { 
@@ -39,15 +109,20 @@ const Dashboard = () => {
     },
   ];
 
-  const upcomingAppointments = mockAppointments
-    .filter(a => a.status === "scheduled")
+  const upcomingAppointments = appointments
+    .filter(a => a.status === 'confirmed' || a.status === 'pending')
     .slice(0, 4);
 
   return (
     <div className="p-8">
       <div className="mb-8">
-        <h1 className="text-4xl font-display mb-2">Dashboard</h1>
-        <p className="text-muted-foreground">Visão geral do seu negócio</p>
+        <h1 className="text-4xl font-display mb-2">
+          Bem-vindo, {profile?.name || 'Admin'}! 👋
+        </h1>
+        <p className="text-muted-foreground capitalize">{today}</p>
+        <p className="text-lg text-foreground mt-2">
+          Como podemos melhorar seu negócio hoje?
+        </p>
       </div>
 
       {/* Stats Grid */}
@@ -75,13 +150,15 @@ const Dashboard = () => {
               className="flex items-center justify-between p-4 bg-muted rounded-lg"
             >
               <div>
-                <p className="font-semibold">{appointment.clientName}</p>
-                <p className="text-sm text-muted-foreground">{appointment.service}</p>
+                <p className="font-semibold">{appointment.client_name}</p>
+                <p className="text-sm text-muted-foreground">
+                  {appointment.services?.name || 'Serviço não especificado'}
+                </p>
               </div>
               <div className="text-right">
-                <p className="font-semibold">{appointment.time}</p>
+                <p className="font-semibold">{appointment.appointment_time}</p>
                 <p className="text-sm text-muted-foreground">
-                  {appointment.date.toLocaleDateString('pt-BR')}
+                  {new Date(appointment.appointment_date).toLocaleDateString('pt-BR')}
                 </p>
               </div>
             </div>
