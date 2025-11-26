@@ -1,0 +1,246 @@
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { z } from "zod";
+import logo from "@/assets/logo.png";
+
+const appointmentSchema = z.object({
+  client_name: z.string().min(2, "Nome deve ter no mínimo 2 caracteres").max(100),
+  client_phone: z.string().min(10, "Telefone inválido").max(20),
+  client_email: z.string().email("Email inválido").max(255).optional().or(z.literal("")),
+});
+
+interface Service {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  duration_minutes: number;
+}
+
+const PublicSchedule = () => {
+  const [services, setServices] = useState<Service[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedService, setSelectedService] = useState<string>();
+  const [selectedTime, setSelectedTime] = useState<string>();
+  const [loading, setLoading] = useState(false);
+
+  const timeSlots = [
+    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+    "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
+    "16:00", "16:30", "17:00", "17:30", "18:00"
+  ];
+
+  useEffect(() => {
+    loadServices();
+  }, []);
+
+  const loadServices = async () => {
+    const { data, error } = await supabase
+      .from("services")
+      .select("*")
+      .eq("is_active", true)
+      .order("name");
+
+    if (error) {
+      console.error("Error loading services:", error);
+      toast.error("Erro ao carregar serviços");
+    } else {
+      setServices(data || []);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const client_name = formData.get("client_name") as string;
+    const client_phone = formData.get("client_phone") as string;
+    const client_email = formData.get("client_email") as string;
+
+    try {
+      const validation = appointmentSchema.parse({
+        client_name,
+        client_phone,
+        client_email: client_email || undefined,
+      });
+
+      if (!selectedService || !selectedDate || !selectedTime) {
+        toast.error("Preencha todos os campos obrigatórios");
+        return;
+      }
+
+      const { error } = await supabase.from("appointments").insert({
+        client_name: validation.client_name,
+        client_phone: validation.client_phone,
+        client_email: validation.client_email || null,
+        service_id: selectedService,
+        appointment_date: format(selectedDate, "yyyy-MM-dd"),
+        appointment_time: selectedTime,
+        status: "pending",
+      });
+
+      if (error) {
+        console.error("Error creating appointment:", error);
+        toast.error("Erro ao criar agendamento");
+      } else {
+        toast.success("Agendamento criado! Aguarde a confirmação.");
+        e.currentTarget.reset();
+        setSelectedDate(undefined);
+        setSelectedService(undefined);
+        setSelectedTime(undefined);
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      <header className="bg-primary text-primary-foreground border-b border-border/50">
+        <div className="container mx-auto px-4 py-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src={logo} alt="BarberBoss" className="h-12" />
+            <h1 className="text-2xl font-display font-bold">
+              Barber<span className="text-gold">Boss</span>
+            </h1>
+          </div>
+          <Button variant="secondary" onClick={() => window.location.href = "/auth"}>
+            Área Administrativa
+          </Button>
+        </div>
+      </header>
+
+      <main className="container mx-auto px-4 py-8 max-w-2xl">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl">Agendar Horário</CardTitle>
+            <CardDescription>
+              Preencha os dados abaixo para solicitar seu agendamento
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="client_name">Nome Completo *</Label>
+                <Input
+                  id="client_name"
+                  name="client_name"
+                  placeholder="Seu nome"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="client_phone">WhatsApp *</Label>
+                <Input
+                  id="client_phone"
+                  name="client_phone"
+                  type="tel"
+                  placeholder="(00) 00000-0000"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="client_email">Email (opcional)</Label>
+                <Input
+                  id="client_email"
+                  name="client_email"
+                  type="email"
+                  placeholder="seu@email.com"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Serviço *</Label>
+                <Select value={selectedService} onValueChange={setSelectedService} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Escolha o serviço" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {services.map((service) => (
+                      <SelectItem key={service.id} value={service.id}>
+                        {service.name} - R$ {service.price.toFixed(2)} ({service.duration_minutes}min)
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Data *</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !selectedDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {selectedDate ? format(selectedDate, "PPP", { locale: ptBR }) : "Selecione a data"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={setSelectedDate}
+                      disabled={(date) => date < new Date()}
+                      initialFocus
+                      className="pointer-events-auto"
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Horário *</Label>
+                <Select value={selectedTime} onValueChange={setSelectedTime} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Escolha o horário" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {timeSlots.map((time) => (
+                      <SelectItem key={time} value={time}>
+                        {time}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button type="submit" variant="gold" className="w-full" disabled={loading}>
+                {loading ? "Enviando..." : "Solicitar Agendamento"}
+              </Button>
+
+              <p className="text-sm text-muted-foreground text-center">
+                Seu agendamento será confirmado em breve via WhatsApp
+              </p>
+            </form>
+          </CardContent>
+        </Card>
+      </main>
+    </div>
+  );
+};
+
+export default PublicSchedule;
