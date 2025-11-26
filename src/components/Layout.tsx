@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { LayoutDashboard, Calendar, Users, MessageSquare, Scissors, LogOut } from "lucide-react";
+import { LayoutDashboard, Calendar, Users, MessageSquare, Scissors, LogOut, ImageIcon } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ const Layout = ({ children }: LayoutProps) => {
     { title: "Agenda", path: "/agenda", icon: Calendar },
     { title: "Clientes", path: "/clientes", icon: Users },
     { title: "Serviços", path: "/servicos", icon: Scissors },
+    { title: "Galeria", path: "/galeria", icon: ImageIcon },
     { title: "Relacionamento", path: "/relacionamento", icon: MessageSquare },
   ];
 

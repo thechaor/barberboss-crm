@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
+import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import PublicSchedule from "./pages/PublicSchedule";
 import Dashboard from "./pages/Dashboard";
@@ -13,6 +14,7 @@ import Schedule from "./pages/Schedule";
 import Clients from "./pages/Clients";
 import Services from "./pages/Services";
 import Relationship from "./pages/Relationship";
+import Gallery from "./pages/Gallery";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,7 +28,7 @@ const App = () => (
         <AuthProvider>
           <Routes>
             {/* Public routes */}
-            <Route path="/" element={<Navigate to="/agendar" replace />} />
+            <Route path="/" element={<Index />} />
             <Route path="/agendar" element={<PublicSchedule />} />
             <Route path="/auth" element={<Auth />} />
             
@@ -54,6 +56,11 @@ const App = () => (
             <Route path="/relacionamento" element={
               <ProtectedRoute requireAdmin>
                 <Layout><Relationship /></Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/galeria" element={
+              <ProtectedRoute requireAdmin>
+                <Layout><Gallery /></Layout>
               </ProtectedRoute>
             } />
             
