@@ -43,16 +43,17 @@ const Auth = () => {
 
     try {
       const validation = loginSchema.parse({ email, password });
-      const { error } = await signIn(validation.email, validation.password);
+      const result = await signIn(validation.email, validation.password) as { error: any; isAdmin?: boolean };
 
-      if (error) {
-        if (error.message.includes("Invalid login credentials")) {
+      if (result.error) {
+        if (result.error.message.includes("Invalid login credentials")) {
           toast.error("Email ou senha incorretos");
         } else {
-          toast.error(error.message);
+          toast.error(result.error.message);
         }
       } else {
         toast.success("Login realizado com sucesso!");
+        // Navigation is handled by AuthContext
       }
     } catch (error) {
       if (error instanceof z.ZodError) {

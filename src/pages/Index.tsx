@@ -57,26 +57,28 @@ const Index = () => {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 mb-8 animate-fade-in" style={{ animationDelay: '0.8s' }}>
-          <Link to="/agendar">
-            <Button 
-              size="lg" 
-              className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold text-lg px-8 py-6 rounded-lg shadow-xl hover:shadow-2xl transition-all hover:scale-105"
-            >
+          <Button 
+            size="lg" 
+            className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold text-lg px-8 py-6 rounded-lg shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+            asChild
+          >
+            <Link to="/agendar">
               <Calendar className="mr-2 h-5 w-5" />
               Agendar Horário
-            </Button>
-          </Link>
+            </Link>
+          </Button>
           
-          <Link to="/auth">
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="bg-transparent border-2 border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 font-semibold text-lg px-8 py-6 rounded-lg shadow-xl hover:shadow-2xl transition-all hover:scale-105"
-            >
+          <Button 
+            size="lg" 
+            variant="outline"
+            className="bg-transparent border-2 border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 font-semibold text-lg px-8 py-6 rounded-lg shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+            asChild
+          >
+            <Link to="/auth">
               <LogIn className="mr-2 h-5 w-5" />
               Login
-            </Button>
-          </Link>
+            </Link>
+          </Button>
         </div>
 
         {/* Features */}

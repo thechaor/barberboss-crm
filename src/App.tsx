@@ -15,6 +15,8 @@ import Clients from "./pages/Clients";
 import Services from "./pages/Services";
 import Relationship from "./pages/Relationship";
 import Gallery from "./pages/Gallery";
+import Barbers from "./pages/Barbers";
+import ClientDashboard from "./pages/ClientDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -61,6 +63,18 @@ const App = () => (
             <Route path="/galeria" element={
               <ProtectedRoute requireAdmin>
                 <Layout><Gallery /></Layout>
+              </ProtectedRoute>
+            } />
+            <Route path="/barbeiros" element={
+              <ProtectedRoute requireAdmin>
+                <Layout><Barbers /></Layout>
+              </ProtectedRoute>
+            } />
+            
+            {/* Protected client routes */}
+            <Route path="/minha-conta" element={
+              <ProtectedRoute>
+                <ClientDashboard />
               </ProtectedRoute>
             } />
             

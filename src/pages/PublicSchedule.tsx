@@ -18,7 +18,8 @@ import logo from "@/assets/logo.png";
 const appointmentSchema = z.object({
   client_name: z.string().min(2, "Nome deve ter no mínimo 2 caracteres").max(100),
   client_phone: z.string().min(10, "Telefone inválido").max(20),
-  client_email: z.string().email("Email inválido").max(255).optional().or(z.literal("")),
+  client_email: z.string().email("Email inválido").max(255),
+  password: z.string().min(6, "Senha deve ter no mínimo 6 caracteres"),
 });
 
 interface Service {
@@ -69,12 +70,14 @@ const PublicSchedule = () => {
     const client_name = formData.get("client_name") as string;
     const client_phone = formData.get("client_phone") as string;
     const client_email = formData.get("client_email") as string;
+    const password = formData.get("password") as string;
 
     try {
       const validation = appointmentSchema.parse({
         client_name,
         client_phone,
-        client_email: client_email || undefined,
+        client_email,
+        password,
       });
 
       if (!selectedService || !selectedDate || !selectedTime) {
@@ -82,21 +85,42 @@ const PublicSchedule = () => {
         return;
       }
 
-      const { error } = await supabase.from("appointments").insert({
+      // Try to create user account
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: validation.client_email,
+        password: validation.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/minha-conta`,
+          data: {
+            name: validation.client_name,
+            phone: validation.client_phone,
+          },
+        },
+      });
+
+      // Create appointment regardless of signup success (user might already exist)
+      const { error: appointmentError } = await supabase.from("appointments").insert({
         client_name: validation.client_name,
         client_phone: validation.client_phone,
-        client_email: validation.client_email || null,
+        client_email: validation.client_email,
         service_id: selectedService,
         appointment_date: format(selectedDate, "yyyy-MM-dd"),
         appointment_time: selectedTime,
         status: "pending",
       });
 
-      if (error) {
-        console.error("Error creating appointment:", error);
+      if (appointmentError) {
+        console.error("Error creating appointment:", appointmentError);
         toast.error("Erro ao criar agendamento");
       } else {
-        toast.success("Agendamento criado! Aguarde a confirmação.");
+        if (authError && authError.message.includes("already registered")) {
+          toast.success("Agendamento criado! Você já possui conta cadastrada.");
+        } else if (authError) {
+          toast.success("Agendamento criado! Aguarde a confirmação.");
+        } else {
+          toast.success("Conta criada e agendamento realizado! Verifique seu email.");
+        }
+        
         e.currentTarget.reset();
         setSelectedDate(undefined);
         setSelectedService(undefined);
@@ -159,12 +183,24 @@ const PublicSchedule = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="client_email">Email (opcional)</Label>
+                <Label htmlFor="client_email">Email *</Label>
                 <Input
                   id="client_email"
                   name="client_email"
                   type="email"
                   placeholder="seu@email.com"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Senha *</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Mínimo 6 caracteres"
+                  required
                 />
               </div>
 
@@ -229,11 +265,11 @@ const PublicSchedule = () => {
               </div>
 
               <Button type="submit" variant="gold" className="w-full" disabled={loading}>
-                {loading ? "Enviando..." : "Solicitar Agendamento"}
+                {loading ? "Processando..." : "Agendar e Cadastrar"}
               </Button>
 
               <p className="text-sm text-muted-foreground text-center">
-                Seu agendamento será confirmado em breve via WhatsApp
+                Sua conta será criada e seu agendamento confirmado em breve via WhatsApp
               </p>
             </form>
           </CardContent>
