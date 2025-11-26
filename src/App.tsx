@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
@@ -17,6 +17,7 @@ import Relationship from "./pages/Relationship";
 import Gallery from "./pages/Gallery";
 import Barbers from "./pages/Barbers";
 import ClientDashboard from "./pages/ClientDashboard";
+import BarberDashboard from "./pages/BarberDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -71,10 +72,17 @@ const App = () => (
               </ProtectedRoute>
             } />
             
-            {/* Protected client routes */}
+            {/* Protected client route */}
             <Route path="/minha-conta" element={
               <ProtectedRoute>
                 <ClientDashboard />
+              </ProtectedRoute>
+            } />
+
+            {/* Protected barber route */}
+            <Route path="/barbeiro-dashboard" element={
+              <ProtectedRoute requireBarber>
+                <BarberDashboard />
               </ProtectedRoute>
             } />
             

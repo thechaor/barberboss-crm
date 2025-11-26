@@ -5,10 +5,11 @@ import { useAuth } from "@/contexts/AuthContext";
 interface ProtectedRouteProps {
   children: ReactNode;
   requireAdmin?: boolean;
+  requireBarber?: boolean;
 }
 
-export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
-  const { user, isAdmin, loading } = useAuth();
+export const ProtectedRoute = ({ children, requireAdmin = false, requireBarber = false }: ProtectedRouteProps) => {
+  const { user, isAdmin, isBarber, loading } = useAuth();
 
   if (loading) {
     return (
@@ -23,7 +24,11 @@ export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRout
   }
 
   if (requireAdmin && !isAdmin) {
-    return <Navigate to="/agendar" replace />;
+    return <Navigate to="/minha-conta" replace />;
+  }
+
+  if (requireBarber && !isBarber) {
+    return <Navigate to="/minha-conta" replace />;
   }
 
   return <>{children}</>;
