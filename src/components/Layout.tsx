@@ -16,6 +16,7 @@ const Layout = ({ children }: LayoutProps) => {
     { title: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     { title: "Agenda", path: "/agenda", icon: Calendar },
     { title: "Clientes", path: "/clientes", icon: Users },
+    { title: "Barbeiros", path: "/barbeiros", icon: Users },
     { title: "Serviços", path: "/servicos", icon: Scissors },
     { title: "Galeria", path: "/galeria", icon: ImageIcon },
     { title: "Relacionamento", path: "/relacionamento", icon: MessageSquare },
