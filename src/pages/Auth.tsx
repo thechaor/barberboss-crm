@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -23,14 +23,29 @@ const signupSchema = z.object({
 });
 
 const Auth = () => {
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, user, userRole, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  // Redirect if already logged in
-  if (user) {
-    navigate("/dashboard");
-    return null;
+  // Redirect if already logged in (fixes infinite loading)
+  useEffect(() => {
+    if (!authLoading && user) {
+      if (userRole === 'admin') {
+        navigate("/dashboard");
+      } else if (userRole === 'barber') {
+        navigate("/barbeiro-dashboard");
+      } else {
+        navigate("/minha-conta");
+      }
+    }
+  }, [user, userRole, authLoading, navigate]);
+
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold"></div>
+      </div>
+    );
   }
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
