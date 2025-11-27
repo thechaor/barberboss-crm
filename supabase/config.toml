@@ -1,1 +1,4 @@
 project_id = "cahgwsmzgojushtostaj"
+
+[functions.daily-motivation]
+verify_jwt = false
