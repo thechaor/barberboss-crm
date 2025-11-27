@@ -31,7 +31,7 @@ serve(async (req) => {
           },
           {
             role: 'user',
-            content: 'Gere uma frase motivacional diferente e inspiradora para começar o dia de trabalho em uma barbearia. A frase deve ter no máximo 150 caracteres e ser sobre excelência no atendimento, paixão pelo trabalho ou crescimento profissional.'
+            content: 'Gere uma frase motivacional curta e inspiradora para começar o dia de trabalho em uma barbearia. A frase deve ter no máximo 80 caracteres e ser sobre excelência no atendimento, paixão pelo trabalho ou crescimento profissional. Seja direto e objetivo.'
           }
         ],
       }),

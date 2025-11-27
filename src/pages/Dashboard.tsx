@@ -1,5 +1,5 @@
 import { Card } from "@/components/ui/card";
-import { Users, Calendar, TrendingUp, Star, Sparkles } from "lucide-react";
+import { Users, Calendar, TrendingUp, Star } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -131,16 +131,14 @@ const Dashboard = () => {
           Bem-vindo, {profile?.name || 'Admin'}! 👋
         </h1>
         <p className="text-muted-foreground capitalize">{today}</p>
-        <p className="text-lg text-foreground mt-2">
-          Como podemos melhorar seu negócio hoje?
-        </p>
-        {motivation?.quote && (
-          <Card className="mt-4 p-4 bg-gradient-to-r from-gold/10 to-gold/5 border-gold/20">
-            <div className="flex items-start gap-3">
-              <Sparkles className="w-5 h-5 text-gold mt-0.5 flex-shrink-0" />
-              <p className="text-sm italic text-foreground/90">{motivation.quote}</p>
-            </div>
-          </Card>
+        {motivation?.quote ? (
+          <p className="text-lg text-foreground mt-2 italic">
+            {motivation.quote}
+          </p>
+        ) : (
+          <p className="text-lg text-foreground mt-2">
+            Como podemos melhorar seu negócio hoje?
+          </p>
         )}
       </div>
 
