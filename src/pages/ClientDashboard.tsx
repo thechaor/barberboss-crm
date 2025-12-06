@@ -4,14 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { LogOut, MessageCircle, Calendar, Gift } from "lucide-react";
+import { LogOut, Calendar, Gift } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
-interface Barber {
+// Public barber data (without sensitive info like phone/email)
+interface BarberPublic {
   id: string;
   name: string;
-  phone: string;
   photo_url: string | null;
   is_active: boolean;
 }
@@ -57,17 +57,16 @@ const ClientDashboard = () => {
       new Date(profile.birthday).getDate() === today.getDate()
     : false;
 
-  // Fetch active barbers
+  // Fetch active barbers using public view (no sensitive data exposed)
   const { data: barbers = [] } = useQuery({
-    queryKey: ['barbers'],
+    queryKey: ['barbers-public'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('barbers')
-        .select('*')
-        .eq('is_active', true);
+        .from('barbers_public')
+        .select('*');
       
       if (error) throw error;
-      return data as Barber[];
+      return data as BarberPublic[];
     },
   });
 
@@ -90,11 +89,9 @@ const ClientDashboard = () => {
   // Count completed visits
   const completedVisits = appointments.filter(a => a.status === 'completed').length;
 
-  const openWhatsApp = (phone: string, barberName: string) => {
-    const message = encodeURIComponent(
-      `Olá ${barberName}, gostaria de agendar um horário!`
-    );
-    window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
+  // Navigate to scheduling page (clients no longer have direct access to barber phone)
+  const handleSchedule = () => {
+    navigate('/agendar');
   };
 
   const handleLogout = async () => {
@@ -158,7 +155,7 @@ const ClientDashboard = () => {
 
         {/* Barbers List */}
         <h2 className="text-2xl font-display mb-4 flex items-center gap-2">
-          <MessageCircle className="w-6 h-6" />
+          <Calendar className="w-6 h-6" />
           Nossos Barbeiros
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -174,10 +171,10 @@ const ClientDashboard = () => {
               <h3 className="text-xl font-semibold mb-2">{barber.name}</h3>
               <Button
                 className="w-full"
-                onClick={() => openWhatsApp(barber.phone, barber.name)}
+                onClick={handleSchedule}
               >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                Chamar no WhatsApp
+                <Calendar className="w-4 h-4 mr-2" />
+                Agendar com {barber.name}
               </Button>
             </Card>
           ))}

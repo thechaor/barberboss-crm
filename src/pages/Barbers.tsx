@@ -26,6 +26,20 @@ interface Barber {
   created_at: string;
 }
 
+// Allowed image types and max file size (5MB)
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+const validateImageFile = (file: File): string | null => {
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    return 'Tipo de arquivo não permitido. Use JPEG, PNG, WebP ou GIF.';
+  }
+  if (file.size > MAX_FILE_SIZE) {
+    return 'Arquivo muito grande. Tamanho máximo: 5MB.';
+  }
+  return null;
+};
+
 const Barbers = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -55,18 +69,28 @@ const Barbers = () => {
     mutationFn: async (newBarber: typeof formData) => {
       let photoUrl = newBarber.photo_url;
 
-      // Upload photo if file is selected
+      // Upload photo if file is selected (with validation)
       if (photoFile) {
+        const validationError = validateImageFile(photoFile);
+        if (validationError) {
+          throw new Error(validationError);
+        }
+
         setUploading(true);
-        const fileName = `barber-${Date.now()}-${photoFile.name}`;
+        const fileExt = photoFile.name.split('.').pop()?.toLowerCase();
+        const fileName = `barber-${Date.now()}.${fileExt}`;
+        
         const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('gallery')
-          .upload(fileName, photoFile);
+          .from('barber-photos')
+          .upload(fileName, photoFile, {
+            contentType: photoFile.type,
+            upsert: false
+          });
 
         if (uploadError) throw uploadError;
 
         const { data: { publicUrl } } = supabase.storage
-          .from('gallery')
+          .from('barber-photos')
           .getPublicUrl(fileName);
         
         photoUrl = publicUrl;
@@ -86,8 +110,8 @@ const Barbers = () => {
       setPhotoFile(null);
       setUploading(false);
     },
-    onError: () => {
-      toast({ title: "Erro ao adicionar barbeiro", variant: "destructive" });
+    onError: (error: Error) => {
+      toast({ title: error.message || "Erro ao adicionar barbeiro", variant: "destructive" });
       setUploading(false);
     },
   });
@@ -189,17 +213,27 @@ const Barbers = () => {
                 <Input
                   id="photo"
                   type="file"
-                  accept="image/*"
+                  accept=".jpg,.jpeg,.png,.webp,.gif"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
+                      const validationError = validateImageFile(file);
+                      if (validationError) {
+                        toast({ title: validationError, variant: "destructive" });
+                        e.target.value = '';
+                        setPhotoFile(null);
+                        return;
+                      }
                       setPhotoFile(file);
                     }
                   }}
                 />
+                <p className="text-xs text-muted-foreground mt-1">
+                  Formatos aceitos: JPEG, PNG, WebP, GIF. Máximo: 5MB
+                </p>
                 {photoFile && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Arquivo selecionado: {photoFile.name}
+                  <p className="text-sm text-green-600 mt-1">
+                    ✓ {photoFile.name}
                   </p>
                 )}
               </div>
