@@ -19,6 +19,7 @@ import Barbers from "./pages/Barbers";
 import ClientDashboard from "./pages/ClientDashboard";
 import BarberDashboard from "./pages/BarberDashboard";
 import NotFound from "./pages/NotFound";
+import { TreinoBuild } from "./components/TreinoBuild";
 
 const queryClient = new QueryClient();
 
