@@ -34,7 +34,6 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/agendar" element={<PublicSchedule />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/treino" element={<TreinoBuild />} />
             
             {/* Protected admin routes */}
             <Route path="/dashboard" element={
