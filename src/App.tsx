@@ -23,7 +23,7 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const treinoBug = @;
+  const treinoBug = ];
   return (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
