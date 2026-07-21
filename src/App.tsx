@@ -19,7 +19,6 @@ import Barbers from "./pages/Barbers";
 import ClientDashboard from "./pages/ClientDashboard";
 import BarberDashboard from "./pages/BarberDashboard";
 import NotFound from "./pages/NotFound";
-import { TreinoBuild } from "./components/TreinoBuild";
 
 const queryClient = new QueryClient();
 
@@ -35,7 +34,6 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/agendar" element={<PublicSchedule />} />
             <Route path="/auth" element={<Auth />} />
-            <Route path="/treino" element={<TreinoBuild />} />
             
             {/* Protected admin routes */}
             <Route path="/dashboard" element={
