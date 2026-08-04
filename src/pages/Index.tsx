@@ -262,6 +262,8 @@ const Index = () => {
         </div>
 
         {/* Hero content */}
+        <div className="text-center space-y-4 mb-10">
+
           <h1 className="text-5xl md:text-7xl font-display font-bold text-primary-foreground mb-4 animate-fade-in relative inline-block select-none" style={{ animationDelay: '0.2s' }}>
             <span className="relative z-10">
               Barber<span className="text-gold relative inline-block">Boss<span className="corner-glow" aria-hidden="true" /></span>
