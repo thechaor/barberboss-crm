@@ -263,10 +263,13 @@ const Index = () => {
 
         {/* Hero content */}
         <div className="max-w-3xl mx-auto text-center mb-12 space-y-6">
-          <h1 className="text-5xl md:text-7xl font-display font-bold text-primary-foreground mb-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
-            BarberBoss
+          <h1 className="text-5xl md:text-7xl font-display font-bold text-primary-foreground mb-4 animate-fade-in relative inline-block select-none" style={{ animationDelay: '0.2s' }}>
+            <span className="relative z-10">
+              Barber<span className="text-gold">Boss</span>
+            </span>
+            <span className="light-point-glow" aria-hidden="true" />
+            <span className="end-sparkle" aria-hidden="true" />
           </h1>
-          
           <p className="text-xl md:text-2xl text-primary-foreground/90 font-medium animate-fade-in" style={{ animationDelay: '0.4s' }}>
             Sistema completo de gestão para barbearias
           </p>
