@@ -5,11 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { CalendarIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
@@ -81,12 +78,13 @@ const PublicSchedule = () => {
       });
 
       if (!selectedService || !selectedDate || !selectedTime) {
-        toast.error("Preencha todos os campos obrigatórios");
+        toast.error("Preencha todos os campos e selecione a data no calendário");
+        setLoading(false);
         return;
       }
 
-      // Try to create user account
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // Tenta criar a conta do usuário
+      const { error: authError } = await supabase.auth.signUp({
         email: validation.client_email,
         password: validation.password,
         options: {
@@ -98,7 +96,7 @@ const PublicSchedule = () => {
         },
       });
 
-      // Create appointment regardless of signup success (user might already exist)
+      // Cria o agendamento
       const { error: appointmentError } = await supabase.from("appointments").insert({
         client_name: validation.client_name,
         client_phone: validation.client_phone,
@@ -156,7 +154,7 @@ const PublicSchedule = () => {
           <CardHeader>
             <CardTitle className="text-2xl">Agendar Horário</CardTitle>
             <CardDescription>
-              Preencha os dados abaixo para solicitar seu agendamento
+              Preencha os dados abaixo e selecione o dia no calendário para agendar
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -221,31 +219,26 @@ const PublicSchedule = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Data *</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        !selectedDate && "text-muted-foreground"
-                      )}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {selectedDate ? format(selectedDate, "PPP", { locale: ptBR }) : "Selecione a data"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={setSelectedDate}
-                      disabled={(date) => date < new Date()}
-                      initialFocus
-                      className="pointer-events-auto"
-                    />
-                  </PopoverContent>
-                </Popover>
+                <Label>Selecione a Data no Calendário *</Label>
+                <div className="border rounded-lg p-2 flex flex-col items-center justify-center bg-card">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={setSelectedDate}
+                    disabled={(date) => {
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+                      return date < today;
+                    }}
+                    locale={ptBR}
+                    className="rounded-md border-0 pointer-events-auto"
+                  />
+                  {selectedDate && (
+                    <p className="text-xs text-gold font-semibold mt-1">
+                      Data selecionada: {format(selectedDate, "PPP", { locale: ptBR })}
+                    </p>
+                  )}
+                </div>
               </div>
 
               <div className="space-y-2">
