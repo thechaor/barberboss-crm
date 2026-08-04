@@ -1,14 +1,28 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { LogOut, Calendar, Gift } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { LogOut, Calendar, Gift, Scissors } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useState, useEffect } from "react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { toast } from "sonner";
 
-// Public barber data (without sensitive info like phone/email)
 interface BarberPublic {
   id: string;
   name: string;
@@ -24,9 +38,25 @@ interface Appointment {
   services: { name: string } | null;
 }
 
+const timeSlots = [
+  "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+  "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
+  "16:00", "16:30", "17:00", "17:30", "18:00"
+];
+
 const ClientDashboard = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  // Modal / Form state
+  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
+  const [selectedBarber, setSelectedBarber] = useState<string | null>(null);
+  const [selectedService, setSelectedService] = useState<string>();
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedTime, setSelectedTime] = useState<string>();
+  const [clientPhone, setClientPhone] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const today = new Date();
   const todayFormatted = today.toLocaleDateString('pt-BR', {
@@ -36,7 +66,7 @@ const ClientDashboard = () => {
     day: 'numeric',
   });
 
-  // Fetch user profile with birthday
+  // Fetch user profile with birthday & phone
   const { data: profile } = useQuery({
     queryKey: ['profile', user?.id],
     queryFn: async () => {
@@ -51,13 +81,19 @@ const ClientDashboard = () => {
     },
   });
 
+  useEffect(() => {
+    if (profile?.phone) {
+      setClientPhone(profile.phone);
+    }
+  }, [profile]);
+
   // Check if today is user's birthday
   const isBirthday = profile?.birthday 
     ? new Date(profile.birthday).getMonth() === today.getMonth() &&
       new Date(profile.birthday).getDate() === today.getDate()
     : false;
 
-  // Fetch active barbers using public view (no sensitive data exposed)
+  // Fetch active barbers
   const { data: barbers = [] } = useQuery({
     queryKey: ['barbers-public'],
     queryFn: async () => {
@@ -67,6 +103,21 @@ const ClientDashboard = () => {
       
       if (error) throw error;
       return data as BarberPublic[];
+    },
+  });
+
+  // Fetch active services
+  const { data: services = [] } = useQuery({
+    queryKey: ['active-services'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .eq('is_active', true)
+        .order('name');
+
+      if (error) throw error;
+      return data;
     },
   });
 
@@ -86,12 +137,50 @@ const ClientDashboard = () => {
     enabled: !!user?.email,
   });
 
-  // Count completed visits
   const completedVisits = appointments.filter(a => a.status === 'completed').length;
 
-  // Navigate to scheduling page (clients no longer have direct access to barber phone)
-  const handleSchedule = () => {
-    navigate('/agendar');
+  const handleOpenSchedule = (barberId?: string | null) => {
+    setSelectedBarber(barberId || null);
+    setIsScheduleOpen(true);
+  };
+
+  const handleScheduleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!selectedService || !selectedDate || !selectedTime) {
+      toast.error("Selecione o serviço, a data e o horário desejados");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.from("appointments").insert({
+        client_name: profile?.name || user?.email?.split("@")[0] || "Cliente",
+        client_phone: clientPhone || profile?.phone || "",
+        client_email: user?.email,
+        barber_id: selectedBarber || null,
+        service_id: selectedService,
+        appointment_date: format(selectedDate, "yyyy-MM-dd"),
+        appointment_time: selectedTime,
+        status: "pending",
+      });
+
+      if (error) throw error;
+
+      toast.success("Agendamento solicitado com sucesso! Aguarde a confirmação.");
+      setIsScheduleOpen(false);
+      setSelectedService(undefined);
+      setSelectedDate(undefined);
+      setSelectedTime(undefined);
+      setSelectedBarber(null);
+      queryClient.invalidateQueries({ queryKey: ['appointments', user?.email] });
+    } catch (error: any) {
+      console.error("Erro ao agendar:", error);
+      toast.error(error.message || "Erro ao solicitar agendamento");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleLogout = async () => {
@@ -155,7 +244,7 @@ const ClientDashboard = () => {
 
         {/* Barbers List */}
         <h2 className="text-2xl font-display mb-4 flex items-center gap-2">
-          <Calendar className="w-6 h-6" />
+          <Scissors className="w-6 h-6 text-gold" />
           Nossos Barbeiros
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -171,7 +260,8 @@ const ClientDashboard = () => {
               <h3 className="text-xl font-semibold mb-2">{barber.name}</h3>
               <Button
                 className="w-full"
-                onClick={handleSchedule}
+                variant="gold"
+                onClick={() => handleOpenSchedule(barber.id)}
               >
                 <Calendar className="w-4 h-4 mr-2" />
                 Agendar com {barber.name}
@@ -182,7 +272,7 @@ const ClientDashboard = () => {
 
         {/* Schedule Button */}
         <div className="flex justify-center mb-8">
-          <Button size="lg" onClick={() => navigate('/agendar')}>
+          <Button size="lg" variant="gold" onClick={() => handleOpenSchedule(null)}>
             <Calendar className="w-5 h-5 mr-2" />
             Agendar Novo Horário
           </Button>
@@ -230,6 +320,114 @@ const ClientDashboard = () => {
           </Card>
         )}
       </main>
+
+      {/* Popup / Modal Leve de Agendamento */}
+      <Dialog open={isScheduleOpen} onOpenChange={setIsScheduleOpen}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader className="text-center">
+            <img src={logo} alt="BarberBoss" className="h-14 mx-auto mb-2" />
+            <DialogTitle className="text-2xl font-display">
+              Novo <span className="text-gold">Agendamento</span>
+            </DialogTitle>
+            <DialogDescription>
+              Escolha o serviço, barbeiro e o melhor dia/horário para você
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleScheduleSubmit} className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Label htmlFor="client-phone">WhatsApp / Telefone para Contato *</Label>
+              <Input
+                id="client-phone"
+                type="tel"
+                placeholder="(00) 00000-0000"
+                value={clientPhone}
+                onChange={(e) => setClientPhone(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Barbeiro (Opcional)</Label>
+              <Select
+                value={selectedBarber || "any"}
+                onValueChange={(val) => setSelectedBarber(val === "any" ? null : val)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione um barbeiro" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="any">Qualquer barbeiro disponível</SelectItem>
+                  {barbers.map((b) => (
+                    <SelectItem key={b.id} value={b.id}>
+                      {b.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Serviço *</Label>
+              <Select value={selectedService} onValueChange={setSelectedService} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Escolha o serviço" />
+                </SelectTrigger>
+                <SelectContent>
+                  {services.map((service) => (
+                    <SelectItem key={service.id} value={service.id}>
+                      {service.name} - R$ {service.price.toFixed(2)} ({service.duration_minutes}min)
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Data no Calendário *</Label>
+              <div className="border rounded-lg p-2 flex flex-col items-center justify-center bg-card">
+                <CalendarComponent
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  disabled={(date) => {
+                    const todayDate = new Date();
+                    todayDate.setHours(0, 0, 0, 0);
+                    return date < todayDate;
+                  }}
+                  locale={ptBR}
+                  className="rounded-md border-0 pointer-events-auto"
+                />
+                {selectedDate && (
+                  <p className="text-xs text-gold font-semibold mt-1">
+                    Data selecionada: {format(selectedDate, "PPP", { locale: ptBR })}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Horário *</Label>
+              <Select value={selectedTime} onValueChange={setSelectedTime} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Escolha o horário" />
+                </SelectTrigger>
+                <SelectContent>
+                  {timeSlots.map((time) => (
+                    <SelectItem key={time} value={time}>
+                      {time}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button type="submit" variant="gold" className="w-full mt-4" disabled={loading}>
+              {loading ? "Confirmando..." : "Solicitar Agendamento"}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
