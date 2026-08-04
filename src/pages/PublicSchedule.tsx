@@ -150,7 +150,7 @@ const PublicSchedule = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-2xl">
-        <Card>
+        <Card className="rounded-2xl">
           <CardHeader>
             <CardTitle className="text-2xl">Agendar Horário</CardTitle>
             <CardDescription>

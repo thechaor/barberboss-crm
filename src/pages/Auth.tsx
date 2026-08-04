@@ -122,7 +122,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md rounded-2xl">
         <CardHeader className="text-center">
           <img src={logo} alt="BarberBoss" className="h-20 mx-auto mb-4" />
           <CardTitle className="text-2xl font-display">
