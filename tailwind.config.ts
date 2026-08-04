@@ -18,6 +18,7 @@ export default {
         display: ['Cormorant Garamond', 'Montserrat', 'Georgia', 'serif'],
         body: ['Manrope', 'sans-serif'],
       },
+      colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -126,6 +127,7 @@ export default {
         "pulse-glow": "pulse-glow 3s infinite ease-in-out",
         "float": "float 4s infinite ease-in-out",
       },
+    },
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;
