@@ -1,73 +1,72 @@
-# Welcome to your Lovable project
+# BarberBoss CRM
 
-## Project info
+I want to create a CRM MVP app for a barbershop called BarberBoss, with a clean, modern but traditional visual identity. It should include:
 
-**URL**: https://lovable.dev/projects/7224f901-ccc4-4ba6-bb1c-1ad1f7a33a6a
+Core MVP Functionality:
 
-## How can I edit this code?
+4 screens: Dashboard, Agenda, Clients, and Relationship
 
-There are several ways of editing your application.
+Features: client CRUD, daily scheduling, auto-updated visit counter, filters by birthday / no haircut in 30 days / recurring clients
 
-**Use Lovable**
+Lists must always be sorted alphabetically
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7224f901-ccc4-4ba6-bb1c-1ad1f7a33a6a) and start prompting.
+Brand Identity Integration:
 
-Changes made via Lovable will be committed automatically to this repo.
+Font: Montserrat Bold for titles, Inter or Roboto for UI text
 
-**Use your preferred IDE**
+Colors:
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Primary dark: #111827 (backgrounds, nav, strong text)
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Gold accent: #CDAA7D (CTA buttons, highlights)
 
-Follow these steps:
+Light background: #F9FAFB
+
+Red #B91C1C and Navy #1E3A8A for labels and detail accents
+
+Buttons:
+
+Primary: gold background, dark text, 8px rounded
+
+Secondary: white with gold/light gray border
+
+Client cards: light background, soft borders, tag styles based on criteria (gold, red, or navy border)
+
+Header with dark background, logo “BarberBoss” in white + gold
+
+All UI aligned with the tone: clean, direct, organized, fast for daily use
+
+Microcopy & UX Tone:
+
+Text examples for client messages:
+
+Birthday: “Fala, [NOME]! Parabéns pelo seu aniversário! 🎉 Quando vier cortar o cabelo essa semana, você ganha [X% de desconto/brinde].”
+
+30+ days: “Oi, [NOME]! Tudo bem? Vi aqui que faz um tempinho que você não vem dar um tapa no visual. Quer agendar um horário essa semana?”
+
+VIP: “Fala, [NOME]! Você é um dos nossos clientes VIPs. Quando quiser marcar, me chama aqui e vejo o melhor horário pra você 😉”
+
+Ensure to use best practices. Double check the already existing code. Changes to other parts of the code must not be made without permission.
+
+This project was built with [Lovable](https://lovable.dev).
+
+**Live app**: https://barberboss-crm.lovable.app
+
+## Build with Lovable
+
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/7224f901-ccc4-4ba6-bb1c-1ad1f7a33a6a).
+
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+git clone <this-repository-url>
+cd <repository-name>
 npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/7224f901-ccc4-4ba6-bb1c-1ad1f7a33a6a) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
