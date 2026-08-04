@@ -6,11 +6,6 @@
   display: none !important;
 }
 
-
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
     --background: 222 47% 11%;
@@ -31,7 +26,7 @@ All colors MUST be HSL.
     --muted: 222 35% 18%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 36 45% 65%;
+    --accent: 36 50% 64%;
     --accent-foreground: 222 47% 11%;
 
     --destructive: 0 74% 42%;
@@ -39,11 +34,11 @@ All colors MUST be HSL.
 
     --border: 222 30% 22%;
     --input: 222 30% 22%;
-    --ring: 36 45% 65%;
+    --ring: 36 50% 64%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
     
-    --gold: 36 45% 65%;
+    --gold: 36 50% 64%;
     --gold-foreground: 222 47% 11%;
     --navy: 223 64% 33%;
     --navy-foreground: 210 20% 98%;
@@ -56,7 +51,7 @@ All colors MUST be HSL.
     --sidebar-accent: 222 40% 14%;
     --sidebar-accent-foreground: 210 20% 98%;
     --sidebar-border: 222 30% 22%;
-    --sidebar-ring: 36 45% 65%;
+    --sidebar-ring: 36 50% 64%;
   }
 
   .dark {
@@ -78,7 +73,7 @@ All colors MUST be HSL.
     --muted: 222 35% 14%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 36 45% 65%;
+    --accent: 36 50% 64%;
     --accent-foreground: 222 50% 8%;
 
     --destructive: 0 74% 42%;
@@ -86,51 +81,14 @@ All colors MUST be HSL.
 
     --border: 222 30% 18%;
     --input: 222 30% 18%;
-    --ring: 36 45% 65%;
+    --ring: 36 50% 64%;
     
-    --gold: 36 45% 65%;
+    --gold: 36 50% 64%;
     --gold-foreground: 222 50% 8%;
     --navy: 223 64% 38%;
     --navy-foreground: 210 20% 98%;
     --sidebar-dark: 222 50% 6%;
   }
-}
-  .dark {
-    --background: 217 33% 8%;
-    --foreground: 210 20% 98%;
-
-    --card: 217 33% 12%;
-    --card-foreground: 210 20% 98%;
-
-    --popover: 217 33% 12%;
-    --popover-foreground: 210 20% 98%;
-
-    --primary: 217 33% 12%;
-    --primary-foreground: 210 20% 98%;
-
-    --secondary: 217 33% 16%;
-    --secondary-foreground: 210 20% 98%;
-
-    --muted: 217 33% 16%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 38 45% 65%;
-    --accent-foreground: 217 33% 8%;
-
-    --destructive: 0 74% 42%;
-    --destructive-foreground: 210 20% 98%;
-
-    --border: 217 33% 18%;
-    --input: 217 33% 18%;
-    --ring: 38 45% 65%;
-    
-    --gold: 38 45% 65%;
-    --gold-foreground: 217 33% 8%;
-    --navy: 221 65% 50%;
-    --navy-foreground: 210 20% 98%;
-    --sidebar-dark: 217 33% 6%;
-  }
-
 }
 
 @layer base {
@@ -138,12 +96,16 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans antialiased selection:bg-gold selection:text-gold-foreground;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display font-bold;
+    @apply font-display font-bold tracking-tight;
   }
 }
 
@@ -155,9 +117,21 @@ All colors MUST be HSL.
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  .text-gradient-gold {
+    @apply bg-gradient-to-r from-[#DFBA8F] via-[#CDAA7D] to-[#B89363] bg-clip-text text-transparent;
+  }
+
+  .bg-glass {
+    @apply bg-card/80 backdrop-blur-md border border-white/10;
+  }
+
+  .shadow-gold-glow {
+    box-shadow: 0 0 25px -5px rgba(205, 170, 125, 0.25);
+  }
 }
 
-/* Brilho no canto da última letra S de BarberBoss */
+/* Brilho animado na logo BarberBoss */
 @keyframes corner-glow-pulse {
   0%, 100% {
     transform: scale(0.85);
