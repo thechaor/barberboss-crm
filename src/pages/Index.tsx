@@ -1,29 +1,26 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Calendar as CalendarIcon, Scissors, LogIn } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { useState } from "react";
-import { toast } from "sonner";
-import { z } from "zod";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import logo from "@/assets/logo.png";
+import { Header } from "@/components/Header";
+import { Hero } from "@/components/Hero";
+import { ServiceCard3D } from "@/components/ServiceCard3D";
+import { QuickActions } from "@/components/QuickActions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/Value";
 import { Calendar } from "@/components/ui/calendar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import { Star, ShieldCheck, MapPin, Clock, Phone, Award, Scissors, Sparkles } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-
+import { toast } from "sonner";
+import { z } from "zod";
+import logo from "@/assets/logo.png";
 const loginSchema = z.object({
   email: z.string().email({ message: "Email inválido" }),
   password: z.string().min(6, { message: "Senha deve ter no mínimo 6 caracteres" }),
@@ -50,51 +47,54 @@ const timeSlots = [
 ];
 
 const Index = () => {
-  const { data: galleryImages } = useQuery({
-    queryKey: ['gallery-public'],
+  const navigate = useNavigate();
+  const { signIn, signUp } = useAuth();
+
+  // Modals
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
+
+  // Form Loaders
+  const [loading, setLoading] = useState(false);
+  const [scheduleLoading, setScheduleLoading] = useState(false);
+
+  // Schedule States
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedService, setSelectedService] = useState<string>();
+  const [selectedTime, setSelectedTime] = useState<string>();
+
+  // Fetch Services & Gallery
+  const { data: galleryImages = [] } = useQuery({
+    queryKey: ["gallery-public"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('gallery')
-        .select('*')
-        .eq('is_active', true)
-        .order('created_at', { ascending: false })
+        .from("gallery")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: false })
         .limit(8);
-      
       if (error) throw error;
       return data;
     },
   });
 
   const { data: services = [] } = useQuery({
-    queryKey: ['active-services'],
+    queryKey: ["active-services"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('services')
-        .select('*')
-        .eq('is_active', true)
-        .order('name');
-
+        .from("services")
+        .select("*")
+        .eq("is_active", true)
+        .order("name");
       if (error) throw error;
       return data;
     },
   });
 
-  const { signIn, signUp } = useAuth();
-  const navigate = useNavigate();
-
-  // Dialog States
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
-  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
-
-  // Form Loading States
-  const [loading, setLoading] = useState(false);
-  const [scheduleLoading, setScheduleLoading] = useState(false);
-
-  // Schedule Form States
-  const [selectedDate, setSelectedDate] = useState<Date>();
-  const [selectedService, setSelectedService] = useState<string>();
-  const [selectedTime, setSelectedTime] = useState<string>();
-
+  const handleServiceSelect = (serviceId: string) => {
+    setSelectedService(serviceId);
+    setIsScheduleOpen(true);
+  };
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -243,349 +243,473 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-primary relative overflow-hidden">
-      {/* Decorative background elements */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-accent rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-80 h-80 bg-gold rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-      </div>
+    <div className="min-h-screen bg-[#0D1117] text-gray-100 relative selection:bg-gold selection:text-black">
+      {/* Header */}
+      <Header
+        onOpenSchedule={() => setIsScheduleOpen(true)}
+        onOpenLogin={() => setIsLoginOpen(true)}
+      />
 
-      {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-12">
-        {/* Logo */}
-        <div className="mb-8 animate-fade-in">
-          <img 
-            src={logo} 
-            alt="BarberBoss" 
-            className="h-24 w-auto drop-shadow-2xl"
-          />
-        </div>
+      {/* Hero Section */}
+      <Hero onOpenSchedule={() => setIsScheduleOpen(true)} />
 
-        {/* Hero content */}
-        <div className="text-center space-y-4 mb-10">
-
-          <h1 className="text-5xl md:text-7xl font-display font-bold text-primary-foreground mb-4 animate-fade-in relative inline-block select-none" style={{ animationDelay: '0.2s' }}>
-            <span className="relative z-10">
-              Barber<span className="text-gold relative inline-block">Boss<span className="corner-glow" aria-hidden="true" /></span>
+      {/* Services Section */}
+      <section id="servicos" className="py-24 relative bg-surface/50 border-y border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="text-xs font-bold tracking-[0.2em] text-gold uppercase bg-gold/10 px-4 py-1.5 rounded-full border border-gold/20 inline-block mb-4">
+              Menu de Experiências
             </span>
-          </h1>
-          <p className="text-xl md:text-2xl text-primary-foreground/90 font-medium animate-fade-in" style={{ animationDelay: '0.4s' }}>
-            Sistema completo de gestão para barbearias
-          </p>
-          
-          <p className="text-base md:text-lg text-primary-foreground/70 max-w-xl mx-auto animate-fade-in" style={{ animationDelay: '0.6s' }}>
-            Agende seus horários, gerencie clientes e fortaleça relacionamentos com seus clientes VIP.
-          </p>
-        </div>
-
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-8 animate-fade-in" style={{ animationDelay: '0.8s' }}>
-          {/* Form Modal: Agendar Horário */}
-          <Dialog open={isScheduleOpen} onOpenChange={setIsScheduleOpen}>
-            <DialogTrigger asChild>
-              <Button 
-                size="lg" 
-                className="bg-accent hover:bg-accent/90 text-accent-foreground font-semibold text-lg px-8 py-6 rounded-lg shadow-xl hover:shadow-2xl transition-all hover:scale-105"
-              >
-                <CalendarIcon className="mr-2 h-5 w-5" />
-                Agendar Horário
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto no-scrollbar">
-              <DialogHeader className="text-center">
-                <img src={logo} alt="BarberBoss" className="h-16 mx-auto mb-2" />
-                <DialogTitle className="text-2xl font-display">
-                  Agendar <span className="text-gold">Horário</span>
-                </DialogTitle>
-                <DialogDescription>
-                  Preencha os dados e escolha a data e horário no calendário
-                </DialogDescription>
-              </DialogHeader>
-
-              <form onSubmit={handleScheduleSubmit} className="space-y-4 pt-2">
-                <div className="space-y-2">
-                  <Label htmlFor="sched-name">Nome Completo *</Label>
-                  <Input
-                    id="sched-name"
-                    name="client_name"
-                    placeholder="Seu nome"
-                    required
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="sched-phone">WhatsApp *</Label>
-                    <Input
-                      id="sched-phone"
-                      name="client_phone"
-                      type="tel"
-                      placeholder="(00) 00000-0000"
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="sched-email">Email *</Label>
-                    <Input
-                      id="sched-email"
-                      name="client_email"
-                      type="email"
-                      placeholder="seu@email.com"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="sched-password">Senha (para sua conta) *</Label>
-                  <Input
-                    id="sched-password"
-                    name="password"
-                    type="password"
-                    placeholder="Mínimo 6 caracteres"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Serviço *</Label>
-                  <Select value={selectedService} onValueChange={setSelectedService} required>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Escolha o serviço" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {services.map((service) => (
-                        <SelectItem key={service.id} value={service.id}>
-                          {service.name} - R$ {service.price.toFixed(2)} ({service.duration_minutes}min)
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Selecione a Data no Calendário *</Label>
-                  <div className="border rounded-lg p-2 flex flex-col items-center justify-center bg-card">
-                    <Calendar
-                      mode="single"
-                      selected={selectedDate}
-                      onSelect={setSelectedDate}
-                      disabled={(date) => {
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        return date < today;
-                      }}
-                      locale={ptBR}
-                      className="rounded-md border-0 pointer-events-auto"
-                    />
-                    {selectedDate && (
-                      <p className="text-xs text-gold font-semibold mt-1">
-                        Data selecionada: {format(selectedDate, "PPP", { locale: ptBR })}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Horário *</Label>
-                  <Select value={selectedTime} onValueChange={setSelectedTime} required>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Escolha o horário" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {timeSlots.map((time) => (
-                        <SelectItem key={time} value={time}>
-                          {time}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <Button type="submit" variant="gold" className="w-full mt-4" disabled={scheduleLoading}>
-                  {scheduleLoading ? "Processando..." : "Confirmar Agendamento"}
-                </Button>
-              </form>
-            </DialogContent>
-          </Dialog>
-
-          {/* Form Modal: Login */}
-          <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
-            <DialogTrigger asChild>
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="bg-transparent border-2 border-primary-foreground/20 text-primary-foreground hover:bg-primary-foreground/10 font-semibold text-lg px-8 py-6 rounded-lg shadow-xl hover:shadow-2xl transition-all hover:scale-105"
-              >
-                <LogIn className="mr-2 h-5 w-5" />
-                Login
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader className="text-center">
-                <img src={logo} alt="BarberBoss" className="h-20 mx-auto mb-4" />
-                <DialogTitle className="text-2xl font-display">
-                  Barber<span className="text-gold">Boss</span>
-                </DialogTitle>
-                <DialogDescription>Sistema de Gestão para Barbearias</DialogDescription>
-              </DialogHeader>
-              
-              <Tabs defaultValue="login" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="login">Login</TabsTrigger>
-                  <TabsTrigger value="signup">Cadastro</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="login">
-                  <form onSubmit={handleLogin} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="login-email">Email</Label>
-                      <Input
-                        id="login-email"
-                        name="email"
-                        type="email"
-                        placeholder="seu@email.com"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="login-password">Senha</Label>
-                      <Input
-                        id="login-password"
-                        name="password"
-                        type="password"
-                        placeholder="••••••"
-                        required
-                      />
-                    </div>
-                    <Button type="submit" variant="gold" className="w-full" disabled={loading}>
-                      {loading ? "Entrando..." : "Entrar"}
-                    </Button>
-                  </form>
-                </TabsContent>
-
-                <TabsContent value="signup">
-                  <form onSubmit={handleSignup} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-name">Nome Completo</Label>
-                      <Input
-                        id="signup-name"
-                        name="name"
-                        type="text"
-                        placeholder="Seu nome"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-email">Email</Label>
-                      <Input
-                        id="signup-email"
-                        name="email"
-                        type="email"
-                        placeholder="seu@email.com"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-phone">Telefone (opcional)</Label>
-                      <Input
-                        id="signup-phone"
-                        name="phone"
-                        type="tel"
-                        placeholder="(00) 00000-0000"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-password">Senha</Label>
-                      <Input
-                        id="signup-password"
-                        name="password"
-                        type="password"
-                        placeholder="••••••"
-                        required
-                      />
-                    </div>
-                    <Button type="submit" variant="gold" className="w-full" disabled={loading}>
-                      {loading ? "Cadastrando..." : "Criar Conta"}
-                    </Button>
-                  </form>
-                </TabsContent>
-              </Tabs>
-            </DialogContent>
-          </Dialog>
-        </div>
-
-        {/* Features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-16 animate-fade-in" style={{ animationDelay: '1s' }}>
-          <div className="bg-primary-foreground/5 backdrop-blur-sm p-6 rounded-lg border border-primary-foreground/10">
-            <Scissors className="h-8 w-8 text-accent mb-3" />
-            <h3 className="text-lg font-display font-bold text-primary-foreground mb-2">
-              Gestão de Clientes
-            </h3>
-            <p className="text-sm text-primary-foreground/70">
-              Mantenha histórico completo e segmente seus clientes VIP
-            </p>
-          </div>
-
-          <div className="bg-primary-foreground/5 backdrop-blur-sm p-6 rounded-lg border border-primary-foreground/10">
-            <CalendarIcon className="h-8 w-8 text-accent mb-3" />
-            <h3 className="text-lg font-display font-bold text-primary-foreground mb-2">
-              Agenda Inteligente
-            </h3>
-            <p className="text-sm text-primary-foreground/70">
-              Organize sua rotina e confirme agendamentos facilmente
-            </p>
-          </div>
-
-          <div className="bg-primary-foreground/5 backdrop-blur-sm p-6 rounded-lg border border-primary-foreground/10">
-            <div className="h-8 w-8 text-accent mb-3 flex items-center justify-center text-2xl">
-              💬
-            </div>
-            <h3 className="text-lg font-display font-bold text-primary-foreground mb-2">
-              Relacionamento
-            </h3>
-            <p className="text-sm text-primary-foreground/70">
-              Mensagens prontas para reconquistar e fidelizar clientes
-            </p>
-          </div>
-        </div>
-
-        {/* Gallery Section */}
-        {galleryImages && galleryImages.length > 0 && (
-          <div className="max-w-6xl mx-auto mt-20 mb-12 animate-fade-in" style={{ animationDelay: '1.2s' }}>
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground text-center mb-3">
-              🔥 Nossos Trabalhos 🔥
+            <h2 className="font-display text-4xl sm:text-6xl font-bold text-white mb-4">
+              Nossos Serviços <span className="text-gradient-gold">Exclusivos</span>
             </h2>
-            <p className="text-center text-primary-foreground/70 mb-8">
-              Confira alguns dos nossos melhores cortes
+            <p className="text-gray-400 text-base sm:text-lg">
+              Escolha o tratamento ideal para o seu estilo. Todos os procedimentos acompanham consultoria visagista.
             </p>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-4">
+          </div>
+
+          {/* 3D Service Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.map((service) => (
+              <ServiceCard3D
+                key={service.id}
+                service={service}
+                onSelect={handleServiceSelect}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Gallery Section */}
+      {galleryImages.length > 0 && (
+        <section id="galeria" className="py-24 relative">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <span className="text-xs font-bold tracking-[0.2em] text-gold uppercase bg-gold/10 px-4 py-1.5 rounded-full border border-gold/20 inline-block mb-4">
+                Galeria de Transformações
+              </span>
+              <h2 className="font-display text-4xl sm:text-6xl font-bold text-white mb-4">
+                Nossos <span className="text-gradient-gold">Trabalhos</span>
+              </h2>
+              <p className="text-gray-400 text-base sm:text-lg">
+                Confira a excelência e o rigor nos detalhes em cada corte e acabamento.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {galleryImages.map((image) => (
-                <div 
+                <div
                   key={image.id}
-                  className="relative aspect-square rounded-lg overflow-hidden bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10 group cursor-pointer hover:scale-105 transition-transform duration-300"
+                  className="group relative aspect-square rounded-2xl overflow-hidden border border-white/10 bg-surface shadow-xl hover:border-gold/50 transition-all duration-300"
                 >
                   <img
                     src={image.image_url}
-                    alt={image.title || 'Trabalho da barbearia'}
-                    className="w-full h-full object-cover"
+                    alt={image.title || "Trabalho da barbearia"}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
-                  {image.title && (
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                      <p className="text-primary-foreground font-medium p-4 w-full text-center">
-                        {image.title}
-                      </p>
-                    </div>
-                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0D1117]/90 via-[#0D1117]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                    <p className="text-sm font-semibold text-white">
+                      {image.title || "Corte Personalizado BarberBoss"}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
-        )}
-      </div>
+        </section>
+      )}
+
+      {/* Testimonials Section */}
+      <section id="depoimentos" className="py-24 bg-surface/30 border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="text-xs font-bold tracking-[0.2em] text-gold uppercase bg-gold/10 px-4 py-1.5 rounded-full border border-gold/20 inline-block mb-4">
+              Avaliações Reais
+            </span>
+            <h2 className="font-display text-4xl sm:text-6xl font-bold text-white mb-4">
+              O Que Dizem Nossos <span className="text-gradient-gold">Clientes VIP</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                name: "Ricardo Alves",
+                role: "Cliente Há 3 Anos",
+                comment:
+                  "Atendimento impecável! A pontualidade e o profissionalismo da BarberBoss não têm comparação na cidade.",
+                stars: 5,
+              },
+              {
+                name: "Gabriel Santos",
+                role: "Empresário",
+                comment:
+                  "A experiência do ritual de barba com toalha quente é sensacional. Saio renovado a cada visita.",
+                stars: 5,
+              },
+              {
+                name: "Marcelo Fonseca",
+                role: "Advogado",
+                comment:
+                  "O sistema de agendamento online é super rápido. Chego e sou atendido exatamente no horário marcado.",
+                stars: 5,
+              },
+            ].map((testimonial, idx) => (
+              <div
+                key={idx}
+                className="bg-surface border border-white/10 rounded-2xl p-6 shadow-xl relative hover:border-gold/30 transition-colors"
+              >
+                <div className="flex text-gold mb-4">
+                  {[...Array(testimonial.stars)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-gold" />
+                  ))}
+                </div>
+                <p className="text-gray-300 text-sm mb-6 leading-relaxed italic">
+                  "{testimonial.comment}"
+                </p>
+                <div className="border-t border-white/10 pt-4 flex justify-between items-center">
+                  <div>
+                    <h4 className="font-bold text-white text-base">{testimonial.name}</h4>
+                    <span className="text-xs text-gray-400">{testimonial.role}</span>
+                  </div>
+                  <ShieldCheck className="w-5 h-5 text-gold" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="py-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <h2 className="font-display text-3xl sm:text-5xl font-bold text-white mb-4">
+            Dúvidas <span className="text-gradient-gold">Frequentes</span>
+          </h2>
+          <p className="text-gray-400">Tudo o que você precisa saber antes da sua primeira visita.</p>
+        </div>
+
+        <Accordion type="single" collapsible className="w-full space-y-4">
+          <AccordionItem value="item-1" className="border border-white/10 rounded-2xl px-6 bg-surface">
+            <AccordionTrigger className="text-white hover:text-gold text-lg py-5">
+              Como funciona o agendamento online?
+            </AccordionTrigger>
+            <AccordionContent className="text-gray-400 pb-5">
+              Você seleciona o serviço desejado, a data no calendário e o horário de sua preferência. Sua conta é criada automaticamente e você recebe as confirmações diretas no seu e-mail e WhatsApp.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-2" className="border border-white/10 rounded-2xl px-6 bg-surface">
+            <AccordionTrigger className="text-white hover:text-gold text-lg py-5">
+              É necessário chegar com antecedência?
+            </AccordionTrigger>
+            <AccordionContent className="text-gray-400 pb-5">
+              Recomendamos chegar de 5 a 10 minutos antes do seu horário agendado para desfrutar de um drink de boas-vindas no nosso lounge.
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="item-3" className="border border-white/10 rounded-2xl px-6 bg-surface">
+            <AccordionTrigger className="text-white hover:text-gold text-lg py-5">
+              Posso reagendar ou cancelar meu horário?
+            </AccordionTrigger>
+            <AccordionContent className="text-gray-400 pb-5">
+              Sim! Pelo painel 'Minha Conta' você tem total liberdade para gerenciar e visualizar seu histórico de agendamentos.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-surface border-t border-white/10 pt-16 pb-12 text-gray-400">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <img src={logo} alt="BarberBoss" className="h-10" />
+              <span className="font-display text-2xl font-bold text-white">
+                Barber<span className="text-gold">Boss</span>
+              </span>
+            </div>
+            <p className="text-sm leading-relaxed">
+              Tradição, estilo e cuidado pessoal elevado ao mais alto padrão.
+            </p>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-white mb-4 uppercase text-xs tracking-widest text-gold">
+              Navegação
+            </h4>
+            <ul className="space-y-2 text-sm">
+              <li><a href="#hero" className="hover:text-gold">Início</a></li>
+              <li><a href="#servicos" className="hover:text-gold">Serviços</a></li>
+              <li><a href="#galeria" className="hover:text-gold">Galeria</a></li>
+              <li><a href="#faq" className="hover:text-gold">Perguntas Frequentes</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-white mb-4 uppercase text-xs tracking-widest text-gold">
+              Horário de Funcionamento
+            </h4>
+            <p className="text-sm mb-1">Segunda a Sábado: 09h00 às 20h00</p>
+            <p className="text-sm">Domingo: Fechado</p>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-white mb-4 uppercase text-xs tracking-widest text-gold">
+              Contato
+            </h4>
+            <p className="text-sm flex items-center gap-2 mb-2">
+              <Phone className="w-4 h-4 text-gold" /> (11) 99999-9999
+            </p>
+            <p className="text-sm flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-gold" /> Av. Paulista, 1000 - São Paulo/SP
+            </p>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 border-t border-white/5 pt-6 text-center text-xs text-gray-500">
+          © {new Date().getFullYear()} BarberBoss CRM. Todos os direitos reservados.
+        </div>
+      </footer>
+
+      {/* Floating Quick Actions */}
+      <QuickActions onOpenSchedule={() => setIsScheduleOpen(true)} />
+
+      {/* Modal Agendamento */}
+      <Dialog open={isScheduleOpen} onOpenChange={setIsScheduleOpen}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto no-scrollbar bg-surface border-gold/30 text-white">
+          <DialogHeader className="text-center">
+            <img src={logo} alt="BarberBoss" className="h-14 mx-auto mb-2" />
+            <DialogTitle className="text-2xl font-display text-white">
+              Agendar <span className="text-gradient-gold">Horário</span>
+            </DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Escolha seu serviço e defina a data ideal no calendário
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleScheduleSubmit} className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Label htmlFor="sched-name" className="text-gray-300">Nome Completo *</Label>
+              <Input
+                id="sched-name"
+                name="client_name"
+                placeholder="Seu nome completo"
+                className="bg-[#0D1117] border-white/10 text-white"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="sched-phone" className="text-gray-300">WhatsApp *</Label>
+                <Input
+                  id="sched-phone"
+                  name="client_phone"
+                  type="tel"
+                  placeholder="(00) 00000-0000"
+                  className="bg-[#0D1117] border-white/10 text-white"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="sched-email" className="text-gray-300">Email *</Label>
+                <Input
+                  id="sched-email"
+                  name="client_email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  className="bg-[#0D1117] border-white/10 text-white"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="sched-password" className="text-gray-300">Senha (para sua conta) *</Label>
+              <Input
+                id="sched-password"
+                name="password"
+                type="password"
+                placeholder="Mínimo 6 caracteres"
+                className="bg-[#0D1117] border-white/10 text-white"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-gray-300">Serviço *</Label>
+              <Select value={selectedService} onValueChange={setSelectedService} required>
+                <SelectTrigger className="bg-[#0D1117] border-white/10 text-white">
+                  <SelectValue placeholder="Escolha o serviço" />
+                </SelectTrigger>
+                <SelectContent className="bg-surface border-gold/30 text-white">
+                  {services.map((service) => (
+                    <SelectItem key={service.id} value={service.id}>
+                      {service.name} - R$ {service.price.toFixed(2)} ({service.duration_minutes}min)
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-gray-300">Selecione a Data *</Label>
+              <div className="border border-white/10 rounded-xl p-2 flex flex-col items-center justify-center bg-[#0D1117]">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={setSelectedDate}
+                  disabled={(date) => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    return date < today;
+                  }}
+                  locale={ptBR}
+                  className="rounded-md border-0 text-white pointer-events-auto"
+                />
+                {selectedDate && (
+                  <p className="text-xs text-gold font-semibold mt-1">
+                    Data selecionada: {format(selectedDate, "PPP", { locale: ptBR })}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-gray-300">Horário *</Label>
+              <Select value={selectedTime} onValueChange={setSelectedTime} required>
+                <SelectTrigger className="bg-[#0D1117] border-white/10 text-white">
+                  <SelectValue placeholder="Escolha o horário" />
+                </SelectTrigger>
+                <SelectContent className="bg-surface border-gold/30 text-white">
+                  {[
+                    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+                    "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
+                    "16:00", "16:30", "17:00", "17:30", "18:00"
+                  ].map((time) => (
+                    <SelectItem key={time} value={time}>
+                      {time}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <Button type="submit" variant="gold" className="w-full mt-4 shadow-gold-glow" disabled={scheduleLoading}>
+              {scheduleLoading ? "Processando..." : "Confirmar Agendamento"}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal Login */}
+      <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
+        <DialogContent className="sm:max-w-md bg-surface border-gold/30 text-white">
+          <DialogHeader className="text-center">
+            <img src={logo} alt="BarberBoss" className="h-16 mx-auto mb-2" />
+            <DialogTitle className="text-2xl font-display text-white">
+              Barber<span className="text-gold">Boss</span>
+            </DialogTitle>
+            <DialogDescription className="text-gray-400">Acesse sua conta do sistema</DialogDescription>
+          </DialogHeader>
+
+          <Tabs defaultValue="login" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 bg-[#0D1117]">
+              <TabsTrigger value="login">Login</TabsTrigger>
+              <TabsTrigger value="signup">Cadastro</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="login">
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="login-email">Email</Label>
+                  <Input
+                    id="login-email"
+                    name="email"
+                    type="email"
+                    placeholder="seu@email.com"
+                    className="bg-[#0D1117] border-white/10 text-white"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="login-password">Senha</Label>
+                  <Input
+                    id="login-password"
+                    name="password"
+                    type="password"
+                    placeholder="••••••"
+                    className="bg-[#0D1117] border-white/10 text-white"
+                    required
+                  />
+                </div>
+                <Button type="submit" variant="gold" className="w-full shadow-gold-glow" disabled={loading}>
+                  {loading ? "Entrando..." : "Entrar"}
+                </Button>
+              </form>
+            </TabsContent>
+
+            <TabsContent value="signup">
+              <form onSubmit={handleSignup} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signup-name">Nome Completo</Label>
+                  <Input
+                    id="signup-name"
+                    name="name"
+                    type="text"
+                    placeholder="Seu nome"
+                    className="bg-[#0D1117] border-white/10 text-white"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-email">Email</Label>
+                  <Input
+                    id="signup-email"
+                    name="email"
+                    type="email"
+                    placeholder="seu@email.com"
+                    className="bg-[#0D1117] border-white/10 text-white"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-phone">Telefone (opcional)</Label>
+                  <Input
+                    id="signup-phone"
+                    name="phone"
+                    type="tel"
+                    placeholder="(00) 00000-0000"
+                    className="bg-[#0D1117] border-white/10 text-white"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-password">Senha</Label>
+                  <Input
+                    id="signup-password"
+                    name="password"
+                    type="password"
+                    placeholder="••••••"
+                    className="bg-[#0D1117] border-white/10 text-white"
+                    required
+                  />
+                </div>
+                <Button type="submit" variant="gold" className="w-full shadow-gold-glow" disabled={loading}>
+                  {loading ? "Cadastrando..." : "Criar Conta"}
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
+        </DialogContent>
+      </Dialog>
     </div>
+  );
+};
+
+export default Index;
   );
 };
 

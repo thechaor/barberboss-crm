@@ -1,0 +1,17 @@
+{
+  "name": "BarberBoss - Barbearia Premium & CRM",
+  "short_name": "BarberBoss",
+  "description": "Agende seu horário e viva a experiência da melhor barbearia premium.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0D1117",
+  "theme_color": "#D4AF37",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
