@@ -60,7 +60,7 @@ export function Hero({ onOpenSchedule }: HeroProps) {
             size="lg"
             variant="gold"
             onClick={onOpenSchedule}
-            className="w-full sm:w-auto px-8 py-6 text-base font-bold shadow-gold-glow hover:scale-105 transition-transform"
+            className="w-full sm:w-auto px-8 py-6 text-base font-bold shadow-gold-glow hover:scale-105 transition-transform premium-button"
           >
             <CalendarDays className="w-5 h-5 mr-2" />
             Agendar Horário Agora

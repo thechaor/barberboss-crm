@@ -14,9 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
-        display: ['Cormorant Garamond', 'Montserrat', 'Georgia', 'serif'],
-        body: ['Manrope', 'sans-serif'],
+        sans: ['Inter', 'Manrope', 'system-ui', 'sans-serif'],
+        display: ['Playfair Display', 'Cormorant Garamond', 'Montserrat', 'Georgia', 'serif'],
+        body: ['Inter', 'Manrope', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -117,6 +117,14 @@ export default {
         "float": {
           "0%, 100%": { transform: "translateY(0px)" },
           "50%": { transform: "translateY(-8px)" }
+        },
+        "shimmer": {
+          "0%": { backgroundPosition: "-1000px 0" },
+          "100%": { backgroundPosition: "1000px 0" }
+        },
+        "scale-in": {
+          "0%": { opacity: "0", transform: "scale(0.95)" },
+          "100%": { opacity: "1", transform: "scale(1)" }
         }
       },
       animation: {
@@ -126,6 +134,8 @@ export default {
         "fade-in-up": "fade-in-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         "pulse-glow": "pulse-glow 3s infinite ease-in-out",
         "float": "float 4s infinite ease-in-out",
+        "shimmer": "shimmer 2s infinite linear",
+        "scale-in": "scale-in 0.3s ease-out forwards",
       },
     },
   },

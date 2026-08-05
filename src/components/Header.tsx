@@ -61,10 +61,9 @@ export function Header({ onOpenSchedule, onOpenLogin }: HeaderProps) {
             <a
               key={item.label}
               href={item.href}
-              className="text-sm font-medium text-gray-300 hover:text-gold transition-colors relative py-1 group"
+              className="premium-nav-link text-sm font-medium text-gray-300 hover:text-gold transition-colors relative py-1"
             >
               {item.label}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-gold-300 to-gold group-hover:w-full transition-all duration-300" />
             </a>
           ))}
         </div>
@@ -85,7 +84,7 @@ export function Header({ onOpenSchedule, onOpenLogin }: HeaderProps) {
             variant="gold"
             size="sm"
             onClick={onOpenSchedule}
-            className="shadow-gold-glow hover:scale-105 transition-transform"
+            className="shadow-gold-glow hover:scale-105 transition-transform premium-button"
           >
             <Calendar className="w-4 h-4 mr-2" />
             Agendar Horário
@@ -122,7 +121,7 @@ export function Header({ onOpenSchedule, onOpenLogin }: HeaderProps) {
                 setMobileMenuOpen(false);
                 onOpenSchedule();
               }}
-              className="w-full justify-center shadow-gold-glow"
+              className="w-full justify-center shadow-gold-glow premium-button"
             >
               <Calendar className="w-4 h-4 mr-2" />
               Agendar Horário

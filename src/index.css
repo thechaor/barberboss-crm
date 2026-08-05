@@ -114,6 +114,189 @@
   .perspective-1000 {
     perspective: 1000px;
   }
+
+  .premium-card {
+    background: linear-gradient(145deg, rgba(22, 27, 34, 0.9), rgba(13, 17, 23, 0.95));
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    backdrop-filter: blur(12px);
+    transition: all 0.3s ease;
+  }
+
+  .premium-card:hover {
+    border-color: rgba(212, 175, 55, 0.4);
+    box-shadow: 0 8px 40px -8px rgba(212, 175, 55, 0.2);
+    transform: translateY(-2px);
+  }
+
+  .premium-button {
+    background: linear-gradient(135deg, #FFD700 0%, #D4AF37 50%, #B8860B 100%);
+    color: #0D1117;
+    font-weight: 600;
+    box-shadow: 0 4px 20px -4px rgba(212, 175, 55, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .premium-button:hover {
+    box-shadow: 0 8px 30px -4px rgba(212, 175, 55, 0.6);
+    transform: translateY(-1px);
+  }
+
+  .premium-divider {
+    background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.5), transparent);
+    height: 1px;
+  }
+
+  .premium-input {
+    background: rgba(13, 17, 23, 0.8);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .premium-input:focus {
+    border-color: rgba(212, 175, 55, 0.5);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+  }
+
+  .premium-badge {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.05));
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: #D4AF37;
+  }
+
+  .premium-nav-link {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .premium-nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #FFD700, #D4AF37);
+    transition: width 0.3s ease;
+  }
+
+  .premium-nav-link:hover::after {
+    width: 100%;
+  }
+
+  .premium-nav-link.active {
+    color: #D4AF37;
+  }
+
+  .premium-nav-link.active::after {
+    width: 100%;
+  }
+
+  .premium-table-header {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
+    border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  }
+
+  .premium-table-row {
+    transition: all 0.2s ease;
+  }
+
+  .premium-table-row:hover {
+    background: rgba(212, 175, 55, 0.05);
+  }
+
+  .premium-modal {
+    background: linear-gradient(145deg, #161B22, #0D1117);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    box-shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.8), 0 0 40px -20px rgba(212, 175, 55, 0.3);
+  }
+
+  .premium-stat-card {
+    background: linear-gradient(145deg, rgba(22, 27, 34, 0.9), rgba(13, 17, 23, 0.95));
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .premium-stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+    opacity: 0.5;
+  }
+
+  .premium-stat-card:hover {
+    border-color: rgba(212, 175, 55, 0.4);
+    box-shadow: 0 8px 40px -8px rgba(212, 175, 55, 0.2);
+  }
+
+  .premium-section-title {
+    position: relative;
+    display: inline-block;
+  }
+
+  .premium-section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+  }
+
+  .premium-sidebar {
+    background: linear-gradient(180deg, #161B22 0%, #0D1117 100%);
+    border-right: 1px solid rgba(212, 175, 55, 0.15);
+  }
+
+  .premium-sidebar-item {
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+  }
+
+  .premium-sidebar-item:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-left-color: #D4AF37;
+  }
+
+  .premium-sidebar-item.active {
+    background: linear-gradient(90deg, rgba(212, 175, 55, 0.15), transparent);
+    border-left-color: #D4AF37;
+    color: #D4AF37;
+  }
+
+  .premium-avatar {
+    background: linear-gradient(135deg, #D4AF37, #B8860B);
+    color: #0D1117;
+    font-weight: 600;
+  }
+
+  .premium-tag {
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: #D4AF37;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .premium-tag-red {
+    background: rgba(185, 28, 28, 0.1);
+    border: 1px solid rgba(185, 28, 28, 0.3);
+    color: #B91C1C;
+  }
+
+  .premium-tag-navy {
+    background: rgba(30, 58, 138, 0.1);
+    border: 1px solid rgba(30, 58, 138, 0.3);
+    color: #1E3A8A;
+  }
 }
 
 /* Brilho animado na logo BarberBoss */
@@ -153,4 +336,69 @@
   transform: translate(-50%, -50%);
   background: radial-gradient(circle, #ffffff 25%, #CDAA7D 65%, transparent 85%);
   clip-path: polygon(50% 0%, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0% 50%, 38% 38%);
+}
+
+/* Animações premium */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.1), transparent);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out forwards;
+}
+
+/* Scrollbar premium */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0D1117;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #D4AF37, #B8860B);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #FFD700, #D4AF37);
 }
