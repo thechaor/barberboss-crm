@@ -21,6 +21,7 @@ import { ptBR } from "date-fns/locale";
 import { toast } from "sonner";
 import { z } from "zod";
 import logo from "@/assets/logo.png";
+
 const loginSchema = z.object({
   email: z.string().email({ message: "Email inválido" }),
   password: z.string().min(6, { message: "Senha deve ter no mínimo 6 caracteres" }),
@@ -95,6 +96,7 @@ const Index = () => {
     setSelectedService(serviceId);
     setIsScheduleOpen(true);
   };
+
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -585,11 +587,7 @@ const Index = () => {
                   <SelectValue placeholder="Escolha o horário" />
                 </SelectTrigger>
                 <SelectContent className="bg-surface border-gold/30 text-white">
-                  {[
-                    "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-                    "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
-                    "16:00", "16:30", "17:00", "17:30", "18:00"
-                  ].map((time) => (
+                  {timeSlots.map((time) => (
                     <SelectItem key={time} value={time}>
                       {time}
                     </SelectItem>
