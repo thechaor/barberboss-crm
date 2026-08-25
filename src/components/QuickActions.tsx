@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, MessageCircle, Calendar, MapPin, Phone } from "lucide-react";
+import { Plus, MessageCircle, Calendar, MapPin } from "lucide-react";
 
 interface QuickActionsProps {
   onOpenSchedule: () => void;
@@ -22,7 +22,7 @@ export function QuickActions({ onOpenSchedule }: QuickActionsProps) {
             href={whatsappUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm shadow-xl transition-all hover:scale-105 border border-emerald-400/30 group"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm shadow-lg transition-all hover:scale-105"
           >
             <span>Falar no WhatsApp</span>
             <div className="w-8 h-8 rounded-full bg-emerald-700 flex items-center justify-center">
@@ -36,10 +36,10 @@ export function QuickActions({ onOpenSchedule }: QuickActionsProps) {
               setIsOpen(false);
               onOpenSchedule();
             }}
-            className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-gradient-to-r from-gold-400 to-gold-600 text-[#0D1117] font-bold text-sm shadow-gold-glow transition-all hover:scale-105 border border-gold/40 group"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-gold text-gold-foreground font-bold text-sm shadow-lg transition-all hover:scale-105"
           >
             <span>Agendar Horário</span>
-            <div className="w-8 h-8 rounded-full bg-[#0D1117] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-full bg-gold-foreground flex items-center justify-center">
               <Calendar className="w-4 h-4 text-gold" />
             </div>
           </button>
@@ -49,10 +49,10 @@ export function QuickActions({ onOpenSchedule }: QuickActionsProps) {
             href="https://maps.google.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-surface border border-gold/20 text-gray-200 hover:text-gold font-medium text-sm shadow-xl transition-all hover:scale-105 group"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-full bg-card border border-border text-foreground hover:text-gold font-medium text-sm shadow-lg transition-all hover:scale-105"
           >
             <span>Como Chegar</span>
-            <div className="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center text-gold">
+            <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-gold">
               <MapPin className="w-4 h-4" />
             </div>
           </a>
@@ -62,7 +62,7 @@ export function QuickActions({ onOpenSchedule }: QuickActionsProps) {
       {/* Main Floating Trigger Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 rounded-full bg-gradient-to-br from-gold-300 via-gold to-gold-600 text-[#0D1117] flex items-center justify-center shadow-gold-glow hover:scale-110 transition-all duration-300 border-2 border-white/20 group"
+        className="w-14 h-14 rounded-full bg-gold text-gold-foreground flex items-center justify-center shadow-lg hover:scale-110 transition-all duration-300"
         aria-label="Ações Rápidas"
       >
         <Plus
