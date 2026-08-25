@@ -71,7 +71,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased selection:bg-gold selection:text-gold-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
   }
 
   h1, h2, h3, h4, h5, h6 {
