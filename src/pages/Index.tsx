@@ -245,7 +245,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0D1117] text-gray-100 relative selection:bg-gold selection:text-black">
+    <div className="min-h-screen bg-background text-foreground relative">
       {/* Header */}
       <Header
         onOpenSchedule={() => setIsScheduleOpen(true)}
@@ -256,21 +256,21 @@ const Index = () => {
       <Hero onOpenSchedule={() => setIsScheduleOpen(true)} />
 
       {/* Services Section */}
-      <section id="servicos" className="py-24 relative bg-surface/50 border-y border-white/5">
+      <section id="servicos" className="py-24 relative bg-card/50 border-y border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-bold tracking-[0.2em] text-gold uppercase bg-gold/10 px-4 py-1.5 rounded-full border border-gold/20 inline-block mb-4">
+            <span className="text-xs font-bold tracking-[0.2em] text-gold uppercase bg-muted px-4 py-1.5 rounded-full border border-border inline-block mb-4">
               Menu de Experiências
             </span>
-            <h2 className="font-display text-4xl sm:text-6xl font-bold text-white mb-4">
+            <h2 className="font-display text-4xl sm:text-6xl font-bold text-foreground mb-4">
               Nossos Serviços <span className="text-gradient-gold">Exclusivos</span>
             </h2>
-            <p className="text-gray-400 text-base sm:text-lg">
+            <p className="text-muted-foreground text-base sm:text-lg">
               Escolha o tratamento ideal para o seu estilo. Todos os procedimentos acompanham consultoria visagista.
             </p>
           </div>
 
-          {/* 3D Service Cards Grid */}
+          {/* Service Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service) => (
               <ServiceCard3D
@@ -288,13 +288,13 @@ const Index = () => {
         <section id="galeria" className="py-24 relative">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
-              <span className="text-xs font-bold tracking-[0.2em] text-gold uppercase bg-gold/10 px-4 py-1.5 rounded-full border border-gold/20 inline-block mb-4">
+              <span className="text-xs font-bold tracking-[0.2em] text-gold uppercase bg-muted px-4 py-1.5 rounded-full border border-border inline-block mb-4">
                 Galeria de Transformações
               </span>
-              <h2 className="font-display text-4xl sm:text-6xl font-bold text-white mb-4">
+              <h2 className="font-display text-4xl sm:text-6xl font-bold text-foreground mb-4">
                 Nossos <span className="text-gradient-gold">Trabalhos</span>
               </h2>
-              <p className="text-gray-400 text-base sm:text-lg">
+              <p className="text-muted-foreground text-base sm:text-lg">
                 Confira a excelência e o rigor nos detalhes em cada corte e acabamento.
               </p>
             </div>
@@ -303,15 +303,15 @@ const Index = () => {
               {galleryImages.map((image) => (
                 <div
                   key={image.id}
-                  className="group relative aspect-square rounded-2xl overflow-hidden border border-white/10 bg-surface shadow-xl hover:border-gold/50 transition-all duration-300"
+                  className="group relative aspect-square rounded-2xl overflow-hidden border border-border bg-card shadow-sm hover:border-gold/50 transition-all duration-300"
                 >
                   <img
                     src={image.image_url}
                     alt={image.title || "Trabalho da barbearia"}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0D1117]/90 via-[#0D1117]/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                    <p className="text-sm font-semibold text-white">
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                    <p className="text-sm font-semibold text-foreground">
                       {image.title || "Corte Personalizado BarberBoss"}
                     </p>
                   </div>
@@ -323,13 +323,13 @@ const Index = () => {
       )}
 
       {/* Testimonials Section */}
-      <section id="depoimentos" className="py-24 bg-surface/30 border-t border-white/5">
+      <section id="depoimentos" className="py-24 bg-card/30 border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-xs font-bold tracking-[0.2em] text-gold uppercase bg-gold/10 px-4 py-1.5 rounded-full border border-gold/20 inline-block mb-4">
+            <span className="text-xs font-bold tracking-[0.2em] text-gold uppercase bg-muted px-4 py-1.5 rounded-full border border-border inline-block mb-4">
               Avaliações Reais
             </span>
-            <h2 className="font-display text-4xl sm:text-6xl font-bold text-white mb-4">
+            <h2 className="font-display text-4xl sm:text-6xl font-bold text-foreground mb-4">
               O Que Dizem Nossos <span className="text-gradient-gold">Clientes VIP</span>
             </h2>
           </div>
@@ -360,20 +360,20 @@ const Index = () => {
             ].map((testimonial, idx) => (
               <div
                 key={idx}
-                className="bg-surface border border-white/10 rounded-2xl p-6 shadow-xl relative hover:border-gold/30 transition-colors"
+                className="bg-card border border-border rounded-2xl p-6 shadow-sm hover:border-gold/30 transition-colors"
               >
                 <div className="flex text-gold mb-4">
                   {[...Array(testimonial.stars)].map((_, i) => (
                     <Star key={i} className="w-4 h-4 fill-gold" />
                   ))}
                 </div>
-                <p className="text-gray-300 text-sm mb-6 leading-relaxed italic">
+                <p className="text-muted-foreground text-sm mb-6 leading-relaxed italic">
                   "{testimonial.comment}"
                 </p>
-                <div className="border-t border-white/10 pt-4 flex justify-between items-center">
+                <div className="border-t border-border pt-4 flex justify-between items-center">
                   <div>
-                    <h4 className="font-bold text-white text-base">{testimonial.name}</h4>
-                    <span className="text-xs text-gray-400">{testimonial.role}</span>
+                    <h4 className="font-bold text-foreground text-base">{testimonial.name}</h4>
+                    <span className="text-xs text-muted-foreground">{testimonial.role}</span>
                   </div>
                   <ShieldCheck className="w-5 h-5 text-gold" />
                 </div>
@@ -386,36 +386,36 @@ const Index = () => {
       {/* FAQ Section */}
       <section id="faq" className="py-24 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="font-display text-3xl sm:text-5xl font-bold text-white mb-4">
+          <h2 className="font-display text-3xl sm:text-5xl font-bold text-foreground mb-4">
             Dúvidas <span className="text-gradient-gold">Frequentes</span>
           </h2>
-          <p className="text-gray-400">Tudo o que você precisa saber antes da sua primeira visita.</p>
+          <p className="text-muted-foreground">Tudo o que você precisa saber antes da sua primeira visita.</p>
         </div>
 
         <Accordion type="single" collapsible className="w-full space-y-4">
-          <AccordionItem value="item-1" className="border border-white/10 rounded-2xl px-6 bg-surface">
-            <AccordionTrigger className="text-white hover:text-gold text-lg py-5">
+          <AccordionItem value="item-1" className="border border-border rounded-2xl px-6 bg-card">
+            <AccordionTrigger className="text-foreground hover:text-gold text-lg py-5">
               Como funciona o agendamento online?
             </AccordionTrigger>
-            <AccordionContent className="text-gray-400 pb-5">
+            <AccordionContent className="text-muted-foreground pb-5">
               Você seleciona o serviço desejado, a data no calendário e o horário de sua preferência. Sua conta é criada automaticamente e você recebe as confirmações diretas no seu e-mail e WhatsApp.
             </AccordionContent>
           </AccordionItem>
 
-          <AccordionItem value="item-2" className="border border-white/10 rounded-2xl px-6 bg-surface">
-            <AccordionTrigger className="text-white hover:text-gold text-lg py-5">
+          <AccordionItem value="item-2" className="border border-border rounded-2xl px-6 bg-card">
+            <AccordionTrigger className="text-foreground hover:text-gold text-lg py-5">
               É necessário chegar com antecedência?
             </AccordionTrigger>
-            <AccordionContent className="text-gray-400 pb-5">
+            <AccordionContent className="text-muted-foreground pb-5">
               Recomendamos chegar de 5 a 10 minutos antes do seu horário agendado para desfrutar de um drink de boas-vindas no nosso lounge.
             </AccordionContent>
           </AccordionItem>
 
-          <AccordionItem value="item-3" className="border border-white/10 rounded-2xl px-6 bg-surface">
-            <AccordionTrigger className="text-white hover:text-gold text-lg py-5">
+          <AccordionItem value="item-3" className="border border-border rounded-2xl px-6 bg-card">
+            <AccordionTrigger className="text-foreground hover:text-gold text-lg py-5">
               Posso reagendar ou cancelar meu horário?
             </AccordionTrigger>
-            <AccordionContent className="text-gray-400 pb-5">
+            <AccordionContent className="text-muted-foreground pb-5">
               Sim! Pelo painel 'Minha Conta' você tem total liberdade para gerenciar e visualizar seu histórico de agendamentos.
             </AccordionContent>
           </AccordionItem>
@@ -423,12 +423,12 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-surface border-t border-white/10 pt-16 pb-12 text-gray-400">
+      <footer className="bg-card border-t border-border pt-16 pb-12 text-muted-foreground">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div>
             <div className="flex items-center gap-2 mb-4">
               <img src={logo} alt="BarberBoss" className="h-10" />
-              <span className="font-display text-2xl font-bold text-white">
+              <span className="font-display text-2xl font-bold text-foreground">
                 Barber<span className="text-gold">Boss</span>
               </span>
             </div>
@@ -438,7 +438,7 @@ const Index = () => {
           </div>
 
           <div>
-            <h4 className="font-bold text-white mb-4 uppercase text-xs tracking-widest text-gold">
+            <h4 className="font-bold text-foreground mb-4 uppercase text-xs tracking-widest text-gold">
               Navegação
             </h4>
             <ul className="space-y-2 text-sm">
@@ -450,7 +450,7 @@ const Index = () => {
           </div>
 
           <div>
-            <h4 className="font-bold text-white mb-4 uppercase text-xs tracking-widest text-gold">
+            <h4 className="font-bold text-foreground mb-4 uppercase text-xs tracking-widest text-gold">
               Horário de Funcionamento
             </h4>
             <p className="text-sm mb-1">Segunda a Sábado: 09h00 às 20h00</p>
@@ -458,7 +458,7 @@ const Index = () => {
           </div>
 
           <div>
-            <h4 className="font-bold text-white mb-4 uppercase text-xs tracking-widest text-gold">
+            <h4 className="font-bold text-foreground mb-4 uppercase text-xs tracking-widest text-gold">
               Contato
             </h4>
             <p className="text-sm flex items-center gap-2 mb-2">
@@ -470,7 +470,7 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 border-t border-white/5 pt-6 text-center text-xs text-gray-500">
+        <div className="max-w-7xl mx-auto px-4 border-t border-border pt-6 text-center text-xs text-muted-foreground">
           © {new Date().getFullYear()} BarberBoss CRM. Todos os direitos reservados.
         </div>
       </footer>
@@ -480,74 +480,74 @@ const Index = () => {
 
       {/* Modal Agendamento */}
       <Dialog open={isScheduleOpen} onOpenChange={setIsScheduleOpen}>
-        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto no-scrollbar bg-surface border-gold/30 text-white">
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto no-scrollbar bg-card border-border text-foreground">
           <DialogHeader className="text-center">
             <img src={logo} alt="BarberBoss" className="h-14 mx-auto mb-2" />
-            <DialogTitle className="text-2xl font-display text-white">
+            <DialogTitle className="text-2xl font-display text-foreground">
               Agendar <span className="text-gradient-gold">Horário</span>
             </DialogTitle>
-            <DialogDescription className="text-gray-400">
+            <DialogDescription className="text-muted-foreground">
               Escolha seu serviço e defina a data ideal no calendário
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleScheduleSubmit} className="space-y-4 pt-2">
             <div className="space-y-2">
-              <Label htmlFor="sched-name" className="text-gray-300">Nome Completo *</Label>
+              <Label htmlFor="sched-name" className="text-foreground">Nome Completo *</Label>
               <Input
                 id="sched-name"
                 name="client_name"
                 placeholder="Seu nome completo"
-                className="bg-[#0D1117] border-white/10 text-white"
+                className="bg-background border-border text-foreground"
                 required
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="sched-phone" className="text-gray-300">WhatsApp *</Label>
+                <Label htmlFor="sched-phone" className="text-foreground">WhatsApp *</Label>
                 <Input
                   id="sched-phone"
                   name="client_phone"
                   type="tel"
                   placeholder="(00) 00000-0000"
-                  className="bg-[#0D1117] border-white/10 text-white"
+                  className="bg-background border-border text-foreground"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="sched-email" className="text-gray-300">Email *</Label>
+                <Label htmlFor="sched-email" className="text-foreground">Email *</Label>
                 <Input
                   id="sched-email"
                   name="client_email"
                   type="email"
                   placeholder="seu@email.com"
-                  className="bg-[#0D1117] border-white/10 text-white"
+                  className="bg-background border-border text-foreground"
                   required
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="sched-password" className="text-gray-300">Senha (para sua conta) *</Label>
+              <Label htmlFor="sched-password" className="text-foreground">Senha (para sua conta) *</Label>
               <Input
                 id="sched-password"
                 name="password"
                 type="password"
                 placeholder="Mínimo 6 caracteres"
-                className="bg-[#0D1117] border-white/10 text-white"
+                className="bg-background border-border text-foreground"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-gray-300">Serviço *</Label>
+              <Label className="text-foreground">Serviço *</Label>
               <Select value={selectedService} onValueChange={setSelectedService} required>
-                <SelectTrigger className="bg-[#0D1117] border-white/10 text-white">
+                <SelectTrigger className="bg-background border-border text-foreground">
                   <SelectValue placeholder="Escolha o serviço" />
                 </SelectTrigger>
-                <SelectContent className="bg-surface border-gold/30 text-white">
+                <SelectContent className="bg-card border-border text-foreground">
                   {services.map((service) => (
                     <SelectItem key={service.id} value={service.id}>
                       {service.name} - R$ {service.price.toFixed(2)} ({service.duration_minutes}min)
@@ -558,8 +558,8 @@ const Index = () => {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-gray-300">Selecione a Data *</Label>
-              <div className="border border-white/10 rounded-xl p-2 flex flex-col items-center justify-center bg-[#0D1117]">
+              <Label className="text-foreground">Selecione a Data *</Label>
+              <div className="border border-border rounded-xl p-2 flex flex-col items-center justify-center bg-background">
                 <Calendar
                   mode="single"
                   selected={selectedDate}
@@ -570,7 +570,7 @@ const Index = () => {
                     return date < today;
                   }}
                   locale={ptBR}
-                  className="rounded-md border-0 text-white pointer-events-auto"
+                  className="rounded-md border-0 text-foreground pointer-events-auto"
                 />
                 {selectedDate && (
                   <p className="text-xs text-gold font-semibold mt-1">
@@ -581,12 +581,12 @@ const Index = () => {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-gray-300">Horário *</Label>
+              <Label className="text-foreground">Horário *</Label>
               <Select value={selectedTime} onValueChange={setSelectedTime} required>
-                <SelectTrigger className="bg-[#0D1117] border-white/10 text-white">
+                <SelectTrigger className="bg-background border-border text-foreground">
                   <SelectValue placeholder="Escolha o horário" />
                 </SelectTrigger>
-                <SelectContent className="bg-surface border-gold/30 text-white">
+                <SelectContent className="bg-card border-border text-foreground">
                   {timeSlots.map((time) => (
                     <SelectItem key={time} value={time}>
                       {time}
@@ -596,7 +596,7 @@ const Index = () => {
               </Select>
             </div>
 
-            <Button type="submit" variant="gold" className="w-full mt-4 shadow-gold-glow" disabled={scheduleLoading}>
+            <Button type="submit" variant="gold" className="w-full mt-4" disabled={scheduleLoading}>
               {scheduleLoading ? "Processando..." : "Confirmar Agendamento"}
             </Button>
           </form>
@@ -605,17 +605,17 @@ const Index = () => {
 
       {/* Modal Login */}
       <Dialog open={isLoginOpen} onOpenChange={setIsLoginOpen}>
-        <DialogContent className="sm:max-w-md bg-surface border-gold/30 text-white">
+        <DialogContent className="sm:max-w-md bg-card border-border text-foreground">
           <DialogHeader className="text-center">
             <img src={logo} alt="BarberBoss" className="h-16 mx-auto mb-2" />
-            <DialogTitle className="text-2xl font-display text-white">
+            <DialogTitle className="text-2xl font-display text-foreground">
               Barber<span className="text-gold">Boss</span>
             </DialogTitle>
-            <DialogDescription className="text-gray-400">Acesse sua conta do sistema</DialogDescription>
+            <DialogDescription className="text-muted-foreground">Acesse sua conta do sistema</DialogDescription>
           </DialogHeader>
 
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-[#0D1117]">
+            <TabsList className="grid w-full grid-cols-2 bg-background">
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="signup">Cadastro</TabsTrigger>
             </TabsList>
@@ -629,7 +629,7 @@ const Index = () => {
                     name="email"
                     type="email"
                     placeholder="seu@email.com"
-                    className="bg-[#0D1117] border-white/10 text-white"
+                    className="bg-background border-border text-foreground"
                     required
                   />
                 </div>
@@ -640,11 +640,11 @@ const Index = () => {
                     name="password"
                     type="password"
                     placeholder="••••••"
-                    className="bg-[#0D1117] border-white/10 text-white"
+                    className="bg-background border-border text-foreground"
                     required
                   />
                 </div>
-                <Button type="submit" variant="gold" className="w-full shadow-gold-glow" disabled={loading}>
+                <Button type="submit" variant="gold" className="w-full" disabled={loading}>
                   {loading ? "Entrando..." : "Entrar"}
                 </Button>
               </form>
@@ -659,7 +659,7 @@ const Index = () => {
                     name="name"
                     type="text"
                     placeholder="Seu nome"
-                    className="bg-[#0D1117] border-white/10 text-white"
+                    className="bg-background border-border text-foreground"
                     required
                   />
                 </div>
@@ -670,7 +670,7 @@ const Index = () => {
                     name="email"
                     type="email"
                     placeholder="seu@email.com"
-                    className="bg-[#0D1117] border-white/10 text-white"
+                    className="bg-background border-border text-foreground"
                     required
                   />
                 </div>
@@ -681,7 +681,7 @@ const Index = () => {
                     name="phone"
                     type="tel"
                     placeholder="(00) 00000-0000"
-                    className="bg-[#0D1117] border-white/10 text-white"
+                    className="bg-background border-border text-foreground"
                   />
                 </div>
                 <div className="space-y-2">
@@ -691,11 +691,11 @@ const Index = () => {
                     name="password"
                     type="password"
                     placeholder="••••••"
-                    className="bg-[#0D1117] border-white/10 text-white"
+                    className="bg-background border-border text-foreground"
                     required
                   />
                 </div>
-                <Button type="submit" variant="gold" className="w-full shadow-gold-glow" disabled={loading}>
+                <Button type="submit" variant="gold" className="w-full" disabled={loading}>
                   {loading ? "Cadastrando..." : "Criar Conta"}
                 </Button>
               </form>
