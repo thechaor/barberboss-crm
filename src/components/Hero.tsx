@@ -24,9 +24,9 @@ export function Hero({ onOpenSchedule }: HeroProps) {
 
         {/* Main Heading */}
         <h1 className="font-display text-5xl sm:text-7xl md:text-8xl font-bold text-foreground leading-[1.08] tracking-tight mb-6">
-          Eleve Seu <br />
+          Seu Visual No <br />
           <span className="text-gradient-gold">
-            Visual Premium
+            Estilo Premium
           </span>
         </h1>
 
