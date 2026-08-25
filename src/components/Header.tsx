@@ -31,24 +31,21 @@ export function Header({ onOpenSchedule, onOpenLogin }: HeaderProps) {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-[#0D1117]/90 backdrop-blur-xl border-b border-gold/20 py-3"
+          ? "bg-background/95 backdrop-blur border-b border-border py-3"
           : "bg-transparent py-5"
       }`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Brand Logo */}
         <a href="/" className="flex items-center gap-3 group">
-          <div className="relative">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-300 via-gold to-gold-600 flex items-center justify-center shadow-gold-glow transform group-hover:rotate-12 transition-transform duration-300">
-              <Scissors className="w-5 h-5 text-[#0D1117]" />
-            </div>
-            <span className="corner-glow" aria-hidden="true" />
+          <div className="w-10 h-10 rounded-lg bg-gold flex items-center justify-center">
+            <Scissors className="w-5 h-5 text-gold-foreground" />
           </div>
           <div className="flex flex-col">
-            <span className="font-display text-2xl font-bold text-white tracking-wide leading-none">
-              Barber<span className="text-gradient-gold">Boss</span>
+            <span className="font-display text-2xl font-bold text-foreground tracking-wide leading-none">
+              Barber<span className="text-gold">Boss</span>
             </span>
-            <span className="text-[10px] text-gold/70 tracking-[0.2em] uppercase font-medium mt-1">
+            <span className="text-[10px] text-muted-foreground tracking-[0.2em] uppercase font-medium mt-1">
               Premium Barbershop
             </span>
           </div>
@@ -60,7 +57,7 @@ export function Header({ onOpenSchedule, onOpenLogin }: HeaderProps) {
             <a
               key={item.label}
               href={item.href}
-              className="premium-nav-link text-sm font-medium text-gray-300 hover:text-gold transition-colors relative py-1"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors py-1"
             >
               {item.label}
             </a>
@@ -73,7 +70,7 @@ export function Header({ onOpenSchedule, onOpenLogin }: HeaderProps) {
             variant="outline"
             size="sm"
             onClick={onOpenLogin}
-            className="border-gold/30 text-white hover:bg-gold/10 hover:border-gold"
+            className="border-border text-foreground hover:bg-muted"
           >
             <LogIn className="w-4 h-4 mr-2 text-gold" />
             Login
@@ -83,7 +80,6 @@ export function Header({ onOpenSchedule, onOpenLogin }: HeaderProps) {
             variant="gold"
             size="sm"
             onClick={onOpenSchedule}
-            className="shadow-gold-glow hover:scale-105 transition-transform premium-button"
           >
             <Calendar className="w-4 h-4 mr-2" />
             Agendar Horário
@@ -93,7 +89,7 @@ export function Header({ onOpenSchedule, onOpenLogin }: HeaderProps) {
         {/* Mobile Menu Toggle Button */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 text-white hover:text-gold focus:outline-none"
+          className="md:hidden p-2 text-foreground hover:text-gold focus:outline-none"
           aria-label="Alternar Menu"
         >
           {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -102,13 +98,13 @@ export function Header({ onOpenSchedule, onOpenLogin }: HeaderProps) {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden fixed inset-x-0 top-[65px] bg-[#0D1117]/95 backdrop-blur-2xl border-b border-gold/20 p-6 flex flex-col gap-4 animate-fade-in z-50">
+        <div className="md:hidden fixed inset-x-0 top-[65px] bg-background/95 backdrop-blur border-b border-border p-6 flex flex-col gap-4 animate-fade-in z-50">
           {navItems.map((item) => (
             <a
               key={item.label}
               href={item.href}
               onClick={() => setMobileMenuOpen(false)}
-              className="text-lg font-medium text-gray-200 hover:text-gold py-2 border-b border-white/5"
+              className="text-lg font-medium text-foreground hover:text-gold py-2 border-b border-border"
             >
               {item.label}
             </a>
@@ -120,7 +116,7 @@ export function Header({ onOpenSchedule, onOpenLogin }: HeaderProps) {
                 setMobileMenuOpen(false);
                 onOpenSchedule();
               }}
-              className="w-full justify-center shadow-gold-glow premium-button"
+              className="w-full justify-center"
             >
               <Calendar className="w-4 h-4 mr-2" />
               Agendar Horário
@@ -131,7 +127,7 @@ export function Header({ onOpenSchedule, onOpenLogin }: HeaderProps) {
                 setMobileMenuOpen(false);
                 onOpenLogin();
               }}
-              className="w-full justify-center border-gold/30 text-white"
+              className="w-full justify-center border-border text-foreground"
             >
               <LogIn className="w-4 h-4 mr-2 text-gold" />
               Entrar na Conta
