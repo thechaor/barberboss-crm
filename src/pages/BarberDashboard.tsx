@@ -174,7 +174,7 @@ const BarberDashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-navy border-b border-border">
+      <header className="bg-card border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img src={logo} alt="BarberBoss" className="h-10" />
@@ -210,7 +210,7 @@ const BarberDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <Card className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-gold/10 rounded-lg">
+              <div className="p-3 bg-muted rounded-lg">
                 <CheckCircle className="w-8 h-8 text-gold" />
               </div>
               <div>
@@ -222,7 +222,7 @@ const BarberDashboard = () => {
 
           <Card className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-destructive/10 rounded-lg">
+              <div className="p-3 bg-muted rounded-lg">
                 <Calendar className="w-8 h-8 text-destructive" />
               </div>
               <div>
