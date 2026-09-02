@@ -1,4 +1,3 @@
-```tsx
 import { CalendarDays, PlayCircle, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TypeAnimation } from "@/components/TypeAnimation";
@@ -117,13 +116,7 @@ export function Hero({ onOpenSchedule }: HeroProps) {
               "Atendimento premium com qualidade",
               2000,
             ]}
-            wrapper="span"
-            cursor={true}
-            repeat={Infinity}
             className="text-lg md:text-xl text-foreground/80 font-medium"
-            onError={(error) => {
-              console.error("TypeAnimation error:", error);
-            }}
           />
         </motion.div>
 
@@ -159,4 +152,3 @@ export function Hero({ onOpenSchedule }: HeroProps) {
     </section>
   );
 }
-```
