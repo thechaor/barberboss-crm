@@ -1,4 +1,3 @@
-```tsx
 import { CalendarDays, PlayCircle, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TypeAnimation } from "@/components/TypeAnimation";
@@ -159,4 +158,3 @@ export function Hero({ onOpenSchedule }: HeroProps) {
     </section>
   );
 }
-```
